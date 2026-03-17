@@ -287,14 +287,20 @@
             gap: 1.4cqw;
         }
 
+        .result-title-wrapper {
+            display: flex;
+            align-items: baseline;
+            gap: 1.5cqw;
+        }
+
         .result-heading-1 {
-            font-size: 4.9cqw;
+            font-size: 4.0cqw;
             font-weight: 200;
             color: var(--text-primary);
         }
 
         .result-heading-2 {
-            font-size: 4.9cqw;
+            font-size: 4.0cqw;
             font-weight: 200;
             color: var(--text-secondary);
         }
@@ -419,8 +425,10 @@
 
                 <div class="result-container">
                     <div class="result-left">
-                        <h1 class="result-heading-1">완료</h1>
-                        <h1 class="result-heading-2">했어요</h1>
+                        <div class="result-title-wrapper">
+                            <h1 class="result-heading-1">완료</h1>
+                            <h1 class="result-heading-2">했어요</h1>
+                        </div>
                         <p class="result-description">
                             아래 결과를 복사해서 Claude 또는 NotebookLM에<br>
                             붙여넣으세요. AI가 이 데이터를 바탕으로<br>
