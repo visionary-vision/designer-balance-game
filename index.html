@@ -1,535 +1,663 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Designer Balance Game</title>
-<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designer Balance Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;300;400&family=DM+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F2F1EC;
+            --text-primary: #1a1917;
+            --text-secondary: #8a8880;
+            --text-tertiary: #b8b7b0;
+            --rule-color: #C8C7C0;
+            --mono-text: #777770;
+            --font-main: 'DM Sans', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
 
-html, body {
-  width: 100%; height: 100%;
-  overflow: hidden;
-  background: #c8c7c2;
-  font-family: 'Urbanist', sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.stage {
-  position: relative;
-  width: 100vw;
-  height: 55.8vw;
-  max-height: 100vh;
-  max-width: 179.2vh;
-  margin: auto;
-  top: 50%;
-  transform: translateY(-50%);
-}
+        body {
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: var(--font-main);
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
 
-.bg-img {
-  position: absolute;
-  inset: 0;
-  width: 100%; height: 100%;
-  object-fit: fill;
-  display: block;
-  pointer-events: none;
-}
+        /*
+        이미지와 오버레이를 감싸는 래퍼 (화면을 꽉 채우면서 원본 비율 유지).
+        image.jpg 원본 해상도 (15000 x 8372)을 기준으로 비율 고정.
+        */
+        .scene {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: calc(100vw * (8372 / 15000));
+            min-height: 100vh;
+            min-width: calc(100vh * (15000 / 8372));
+            overflow: hidden;
+        }
 
-/* 모니터 화면 오버레이 — 좌표 기반 */
-.screen-overlay {
-  position: absolute;
-  left: 15%;
-  top: 9.68%;
-  width: 69.95%;
-  height: 82.53%;
-  overflow: hidden;
-  border-radius: 1.2vw;
-}
+        /* 이미지 크기를 scene에 정확히 일치 */
+        .monitor-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
 
-:root {
-  --bg: transparent;
-  --bs: #C0BFB8;
-  --tp: #1a1917;
-  --ts: #8a8880;
-  --th: #b8b7b0;
-}
+        /*
+        모니터 화면 오버레이 위치.
+        비율을 스크린 비율인 2722x1690 으로 강제 고정!
+        새로운 image.jpg에 맞게 폭 조정 및 센터 배치
+        */
+        .screen-overlay {
+            position: absolute;
+            left: 50%;
+            top: 48.6%;        /* 위아래 센터 미세 조정 */
+            transform: translate(-50%, -50%);
+            width: 66.5%;      /* 모니터 베젤을 넘지 않게 넓이 줄임 (조정 필요시 이 값 수정) */
+            aspect-ratio: 2722 / 1690;
+            height: auto;
+            border-radius: 6px; 
+            z-index: 10;
+            
+            background-color: transparent; /* 이미지 자체의 흰색 배경을 그대로 보여주기 위해 투명화 */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            container-type: inline-size;
+        }
 
-.scr {
-  position: absolute;
-  inset: 0;
-  display: none;
-}
-.scr.on { display: block; }
+        /* cqw (Container Query Width) 설정 적용하여 오버레이 창 비율대로 요소들이 줄어들도록 변경 */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            box-sizing: border-box;
+            padding: 5.6cqw; /* Generous internal padding (4 * 1.4) */
+        }
 
-.pg {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--bs);
-  z-index: 10;
-}
-.pg-fill {
-  height: 2px;
-  background: var(--tp);
-  transition: width 0.4s ease;
-}
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
 
-.cn {
-  position: absolute;
-  font-size: 1vw;
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ts);
-  line-height: 1;
-  z-index: 5;
-}
-.tl { top: 7%; left: 5%; }
-.tr { top: 7%; right: 5%; }
-.bl { bottom: 7%; left: 5%; }
-.br { bottom: 7%; right: 5%; font-size: 0.85vw; color: var(--th); }
+        /* Typography & Common Elements */
+        h1, h2, h3, p { margin: 0; }
+        
+        button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+            text-align: left;
+        }
 
-/* ── INTRO ── */
-.ic {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -52%);
-  text-align: center;
-  width: 62%;
-}
+        .thin-rule {
+            border: 0;
+            border-top: 1px solid var(--rule-color);
+            margin: 0;
+        }
 
-.it {
-  font-size: 2.8vw;
-  font-weight: 200;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--tp);
-  line-height: 1.1;
-  margin-bottom: 1.2%;
-  white-space: nowrap;
-}
+        /* Corner Labels */
+        .corner-label {
+            position: absolute;
+            font-size: 1cqw; 
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
 
-.idesc {
-  font-size: 0.88vw;
-  font-weight: 300;
-  color: var(--ts);
-  line-height: 1.8;
-  margin-bottom: 4%;
-  letter-spacing: 0.02em;
-}
+        .label-tl { top: 2.1cqw; left: 2.1cqw; }
+        .label-tr { top: 2.1cqw; right: 2.1cqw; }
+        .label-bl { bottom: 2.1cqw; left: 2.1cqw; }
+        .label-br { bottom: 2.1cqw; right: 2.1cqw; }
+        .disabled-label { color: var(--text-tertiary); cursor: default; }
 
-.is {
-  font-size: 0.95vw;
-  font-weight: 300;
-  color: var(--ts);
-  letter-spacing: 0.04em;
-  margin-bottom: 3.5%;
-}
+        /* Progress Bar */
+        #progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--rule-color);
+            z-index: 10;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--text-primary);
+            transition: width 0.3s ease;
+        }
 
-.ir {
-  width: 8%; height: 1px;
-  background: var(--bs);
-  margin: 0 auto 3%;
-}
+        /* --- SCREEN 1: INTRO --- */
+        #screen-intro {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
 
-.io {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5%;
-  margin-bottom: 4%;
-  text-align: left;
-}
+        .intro-heading {
+            font-size: 5.3cqw;
+            font-weight: 200;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-primary);
+            margin-bottom: 0.7cqw;
+        }
 
-.iob {
-  border-top: 1px solid var(--bs);
-  padding-top: 5%;
-}
+        .intro-subtitle {
+            font-size: 1.5cqw;
+            font-weight: 300;
+            color: var(--text-secondary);
+            margin-bottom: 2.8cqw;
+        }
 
-.iot {
-  font-size: 0.88vw;
-  font-weight: 300;
-  color: var(--ts);
-  line-height: 1.75;
-}
+        .intro-text-blocks {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5.6cqw;
+            width: 80%;
+            margin: 2.8cqw auto;
+            text-align: left;
+        }
 
-.iob.hi .iot { color: var(--tp); }
-.iob.hi::before {
-  content: '■';
-  font-size: 0.55vw;
-  color: var(--tp);
-  margin-right: 0.4vw;
-  vertical-align: middle;
-}
+        .intro-block {
+            border-top: 1px solid var(--rule-color);
+            padding-top: 1.4cqw;
+            font-size: 1.4cqw;
+            font-weight: 300;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
 
-.icta {
-  background: none; border: none;
-  font-family: 'Urbanist', sans-serif;
-  font-size: 0.95vw; font-weight: 300;
-  letter-spacing: 0.08em;
-  color: var(--tp); cursor: pointer;
-  display: inline-flex; align-items: center;
-  gap: 0.5vw; transition: gap 0.2s;
-}
-.icta:hover { gap: 1vw; }
+        .intro-block.selected { border-top: 2px solid var(--text-primary); }
+        .intro-block.selected::before { content: '■ '; color: var(--text-primary); }
 
-.icap {
-  margin-top: 1.2%;
-  font-size: 0.75vw; font-weight: 300;
-  color: var(--th); letter-spacing: 0.08em;
-}
+        #start-btn {
+            font-size: 1.8cqw;
+            font-weight: 300;
+            color: var(--text-primary);
+            margin-top: 4.2cqw;
+            transition: gap 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5ch;
+        }
 
-/* ── QUIZ ── */
-.qc {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -52%);
-  width: 72%;
-}
+        #start-btn:hover { gap: 1.5ch; }
 
-.qs {
-  font-size: 2.6vw;
-  font-weight: 200;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--tp);
-  line-height: 1.15;
-  margin-bottom: 5%;
-  text-align: center;
-}
+        .intro-caption {
+            font-size: 1.2cqw;
+            color: var(--text-tertiary);
+            margin-top: 1.4cqw;
+            font-weight: 300;
+        }
 
-.qch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6%;
-}
+        /* --- SCREEN 2: QUESTION --- */
+        #screen-question {
+            justify-content: center;
+            align-items: center;
+        }
 
-.ch {
-  border-top: 1px solid var(--bs);
-  padding-top: 5%;
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
+        .question-cat-heading {
+            font-size: 4.2cqw;
+            font-weight: 200;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 5.6cqw;
+            text-align: center;
+        }
 
-.chm {
-  display: inline-block;
-  width: 0.55vw; height: 0.55vw;
-  background: var(--tp);
-  margin-right: 0.5vw;
-  vertical-align: middle;
-  opacity: 0;
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-  margin-top: 0.3vw;
-}
+        .choices-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6%;
+            width: 90%;
+            align-items: start;
+        }
 
-.cht {
-  font-size: 1vw;
-  font-weight: 300;
-  color: var(--tp);
-  line-height: 1.8;
-  display: flex;
-  align-items: flex-start;
-  transition: font-weight 0.15s;
-}
+        .choice-block {
+            border-top: 1px solid var(--rule-color);
+            padding-top: 2.1cqw;
+            cursor: pointer;
+            transition: font-weight 0.2s ease, border-top-color 0.2s ease;
+            position: relative;
+        }
 
-.ch:hover { border-top-color: var(--tp); }
-.ch:hover .cht { font-weight: 400; }
-.ch.sel { border-top: 2px solid var(--tp); }
-.ch.sel .chm { opacity: 1; }
+        .choice-block:hover { font-weight: 400; }
+        .choice-block.selected { border-top: 2px solid var(--text-primary); }
 
-.bbtn {
-  background: none; border: none;
-  font-family: 'Urbanist', sans-serif;
-  font-size: 1vw; font-weight: 300;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--ts); cursor: pointer; padding: 0;
-}
-.bbtn:hover { color: var(--tp); }
-.bbtn:disabled { color: var(--th); cursor: not-allowed; }
+        .choice-text {
+            font-size: 1.5cqw;
+            font-weight: 300;
+            line-height: 1.75;
+            color: var(--text-primary);
+            display: flex;
+            align-items: flex-start;
+        }
 
-/* ── RESULT ── */
-.rl {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -52%);
-  width: 72%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6%;
-  align-items: start;
-}
+        .select-marker {
+            display: none;
+            margin-right: 0.5ch;
+            color: var(--text-primary);
+        }
 
-.r-left {}
+        .choice-block.selected .select-marker { display: inline; }
 
-/* 제목을 가로 한줄로 배치하기 위한 래퍼 */
-.rh-wrapper {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5vw;
-  margin-bottom: 2%; /* 기존의 margin-bottom 대체 */
-}
+        /* --- SCREEN 3: RESULT --- */
+        #screen-result {
+            justify-content: center;
+            align-items: center;
+        }
 
-/* 글자 크기 조정 */
-.rh {
-  font-size: 1.6vw; 
-  font-weight: 200;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--tp);
-  line-height: 1.2;
-}
+        .result-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6%;
+            width: 90%;
+            height: 80%;
+            align-items: start;
+        }
 
-.rh2 {
-  font-size: 1.6vw; 
-  font-weight: 200;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--ts);
-  line-height: 1.2;
-}
+        /* Left Column */
+        .result-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4cqw;
+        }
 
-.rdb {
-  border-top: 1px solid var(--bs);
-  padding-top: 5%;
-  margin-bottom: 4%;
-}
+        .result-title-wrapper {
+            display: flex;
+            align-items: baseline;
+            gap: 1.5cqw;
+        }
 
-.rd {
-  font-size: 0.88vw;
-  font-weight: 300;
-  color: var(--ts);
-  line-height: 1.9;
-}
+        .result-heading-1 {
+            font-size: 4.0cqw;
+            font-weight: 200;
+            color: var(--text-primary);
+        }
 
-.rcb {
-  background: none; border: none;
-  font-family: 'Urbanist', sans-serif;
-  font-size: 0.9vw; font-weight: 300;
-  letter-spacing: 0.06em; color: var(--tp);
-  cursor: pointer; display: inline-flex;
-  align-items: center; gap: 0.4vw;
-  transition: gap 0.2s; margin-bottom: 1.5%;
-  padding: 0;
-}
-.rcb:hover { gap: 0.9vw; }
+        .result-heading-2 {
+            font-size: 4.0cqw;
+            font-weight: 200;
+            color: var(--text-secondary);
+        }
 
-.rrb {
-  background: none; border: none;
-  font-family: 'Urbanist', sans-serif;
-  font-size: 0.82vw; font-weight: 300;
-  letter-spacing: 0.06em; color: var(--ts);
-  cursor: pointer; display: block; padding: 0;
-}
-.rrb:hover { color: var(--tp); }
+        .result-description {
+            border-top: 1px solid var(--rule-color);
+            padding-top: 1.4cqw;
+            font-size: 1.4cqw;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.9;
+            margin-bottom: 1.4cqw; /* 추가 마진 */
+        }
 
-.cpn {
-  font-size: 0.75vw; font-weight: 300;
-  color: var(--th); margin-top: 0.4vw;
-  display: block; letter-spacing: 0.04em;
-}
+        #copy-btn {
+            font-size: 1.5cqw;
+            font-weight: 300;
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5ch;
+            transition: gap 0.2s ease;
+        }
+        #copy-btn:hover { gap: 1ch; }
 
-.rr {
-  border-top: 1px solid var(--bs);
-  padding-top: 5%;
-}
+        #copy-status {
+            font-size: 1.2cqw;
+            color: var(--text-tertiary);
+            margin-top: 0.7cqw;
+            font-weight: 300;
+            min-height: 1.2em;
+        }
 
-.rscroll {
-  height: 28vw; overflow-y: auto;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7vw; font-weight: 300;
-  color: #888880; line-height: 2.0;
-  white-space: pre-wrap;
-  scrollbar-width: thin;
-  scrollbar-color: var(--bs) transparent;
-}
-</style>
+        #restart-btn-text {
+            font-size: 1.2cqw;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-top: 4.2cqw;
+            text-decoration: underline;
+            padding-bottom: 1.4cqw;
+        }
+
+        /* Right Column */
+        .result-right {
+            border-top: 1px solid var(--rule-color);
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 1cqw; /* space for scrollbar */
+        }
+
+        /* Custom Scrollbar for result-right */
+        .result-right::-webkit-scrollbar { width: 4px; }
+        .result-right::-webkit-scrollbar-track { background: transparent; }
+        .result-right::-webkit-scrollbar-thumb { background: var(--rule-color); }
+
+        #results-text-area {
+            font-family: var(--font-mono);
+            font-size: 1cqw;
+            line-height: 2.0;
+            color: var(--mono-text);
+            white-space: pre-wrap;
+            padding-top: 1.4cqw;
+        }
+    </style>
 </head>
 <body>
 
-<div class="stage">
-  <!-- image.jpeg가 아니라 image.jpg로 확장자 수정 방영 -->
-  <img class="bg-img" src="image.jpg" alt="">
+    <div class="scene">
+        <!-- 배경: image.jpg -->
+        <img class="monitor-img" src="image.jpg" alt="monitor" />
 
-  <div class="screen-overlay">
+        <!-- 모니터 화면 위에 올라가는 인터랙티브 UI -->
+        <div class="screen-overlay">
+            
+            <div id="progress-container"><div id="progress-bar"></div></div>
 
-    <!-- INTRO -->
-    <div class="scr on" id="si">
-      <div class="pg"><div class="pg-fill" style="width:0%"></div></div>
-      <span class="cn tl">KIDP AI 융합 제품디자인 워크샵</span>
-      <span class="cn tr">50 Questions</span>
-      <div class="ic">
-        <h1 class="it">Designer Balance Game</h1>
-        <p class="is">나의 디자인 가치관과 우선순위를 발견하는 도구</p>
-        <div class="ir"></div>
-        <p class="idesc">두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.<br>선택의 패턴이 나의 브랜드 철학과 디자인 성향을 드러냅니다.</p>
-        <button class="icta" onclick="startQuiz()" style="margin-top:2%;">시작하기 →</button>
-        <p class="icap">총 50문항 · 약 10분 소요</p>
-      </div>
-      <span class="cn bl">INDEX</span>
-      <span class="cn br">00 / 50</span>
+            <!-- SCREEN 1: INTRO -->
+            <div id="screen-intro" class="screen active">
+                <div class="corner-label label-tl">KIDP AI 융합 제품디자인 워크샵</div>
+                <div class="corner-label label-tr">50 Questions</div>
+                <div class="corner-label label-bl">INDEX</div>
+                <div class="corner-label label-br">00 / 50</div>
+
+                <h1 class="intro-heading">Designer /<br>Balance Game</h1>
+                <p class="intro-subtitle">나의 디자인 가치관과 우선순위를 발견하는 도구</p>
+                
+                <hr class="thin-rule" style="width: 10%; margin: 0 auto;">
+
+                <div class="intro-text-blocks">
+                    <div class="intro-block">두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.</div>
+                    <div class="intro-block selected">선택의 패턴이 나의 브랜드 철학과 디자인 성향을 드러냅니다.</div>
+                </div>
+
+                <button id="start-btn">시작하기 →</button>
+                <p class="intro-caption">총 50문항 · 약 10분 소요</p>
+            </div>
+
+            <!-- SCREEN 2: QUESTION -->
+            <div id="screen-question" class="screen">
+                <div id="q-label-tl" class="corner-label label-tl">[Category]</div>
+                <div id="q-label-tr" class="corner-label label-tr">01 / 50</div>
+                <button id="prev-btn" class="corner-label label-bl disabled-label" disabled>이전</button>
+                <div class="corner-label label-br disabled-label">선택하면 자동으로 넘어갑니다</div>
+
+                <h2 id="q-cat-heading" class="question-cat-heading">[Category Name]</h2>
+
+                <div class="choices-container">
+                    <div id="choice-a" class="choice-block">
+                        <p class="choice-text"><span class="select-marker">■</span><span id="text-a">[Option A Text]</span></p>
+                    </div>
+                    <div id="choice-b" class="choice-block">
+                        <p class="choice-text"><span class="select-marker">■</span><span id="text-b">[Option B Text]</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: RESULT -->
+            <div id="screen-result" class="screen">
+                <div class="corner-label label-tl">Designer Balance Game</div>
+                <div class="corner-label label-tr">50 / 50</div>
+                <button id="restart-btn" class="corner-label label-bl">이전으로 (다시 하기)</button>
+
+                <div class="result-container">
+                    <div class="result-left">
+                        <div class="result-title-wrapper">
+                            <h1 class="result-heading-1">완료</h1>
+                            <h1 class="result-heading-2">했어요</h1>
+                        </div>
+                        <p class="result-description">
+                            아래 결과를 복사해서 Claude 또는 NotebookLM에<br>
+                            붙여넣으세요. AI가 이 데이터를 바탕으로<br>
+                            퍼스널 브랜드를 분석해줍니다.
+                        </p>
+                        <button id="copy-btn">결과 복사하기 →</button>
+                        <p id="copy-status"></p>
+                        <button id="restart-link" id="restart-btn-text">다시 하기</button>
+                    </div>
+                    <div class="result-right">
+                        <div id="results-text-area">
+                            <!-- Results will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- QUIZ -->
-    <div class="scr" id="sq">
-      <div class="pg"><div class="pg-fill" id="pg" style="width:2%"></div></div>
-      <span class="cn tl" id="catl"></span>
-      <span class="cn tr" id="qcnt"></span>
-      <div class="qc">
-        <div class="qs" id="qsec"></div>
-        <div class="qch">
-          <div class="ch" id="ca" onclick="pick('A')">
-            <div class="cht"><span class="chm"></span><span id="ta"></span></div>
-          </div>
-          <div class="ch" id="cb" onclick="pick('B')">
-            <div class="cht"><span class="chm"></span><span id="tb"></span></div>
-          </div>
-        </div>
-      </div>
-      <button class="bbtn cn bl" id="bb" onclick="goBack()" disabled>이전</button>
-      <span class="cn br">선택하면 자동으로 넘어갑니다</span>
-    </div>
+    <script>
+        const quizData = [
+            { category: "시장 탐색", q: "Q1", a: "대중이 쓰는 제품을 더 잘 만들고 싶다", b: "소수가 깊이 사랑하는 제품을 만들고 싶다" },
+            { category: "시장 탐색", q: "Q2", a: "이미 존재하는 시장에서 더 잘하고 싶다", b: "아직 없는 시장을 만들고 싶다" },
+            { category: "시장 탐색", q: "Q3", a: "사람들이 원한다고 말하는 것을 만든다", b: "사람들이 원하는지 몰랐던 것을 만든다" },
+            { category: "시장 탐색", q: "Q4", a: "트렌드가 향하는 곳에서 기회를 찾는다", b: "트렌드와 반대되는 곳에서 기회를 찾는다" },
+            { category: "시장 탐색", q: "Q5", a: "빠르게 성장하는 시장이 매력적이다", b: "느리지만 단단한 시장이 매력적이다" },
+            { category: "시장 탐색", q: "Q6", a: "글로벌 시장을 처음부터 겨냥하고 싶다", b: "로컬에서 깊이 뿌리내리고 싶다" },
+            { category: "시장 탐색", q: "Q7", a: "디지털 중심 시장에서 일하고 싶다", b: "물리적 제품 중심 시장에서 일하고 싶다" },
+            { category: "시장 탐색", q: "Q8", a: "소비자 대상 제품이 더 끌린다", b: "전문가·기업 대상 제품이 더 끌린다" },
+            { category: "문제 발견·정의", q: "Q9", a: "불편함을 해결하는 문제가 더 중요하다", b: "경험을 풍요롭게 하는 문제가 더 중요하다" },
+            { category: "문제 발견·정의", q: "Q10", a: "많은 사람이 겪는 문제를 해결하고 싶다", b: "깊이 고통받는 소수의 문제를 해결하고 싶다" },
+            { category: "문제 발견·정의", q: "Q11", a: "데이터로 증명된 문제를 다룬다", b: "아직 데이터는 없지만 느껴지는 문제를 다룬다" },
+            { category: "문제 발견·정의", q: "Q12", a: "사용자가 직접 말한 문제에서 출발한다", b: "사용자가 말하지 못한 문제에서 출발한다" },
+            { category: "문제 발견·정의", q: "Q13", a: "기술로 해결할 수 있는 문제가 흥미롭다", b: "기술 없이 해결해야 하는 문제가 흥미롭다" },
+            { category: "문제 발견·정의", q: "Q14", a: "지금 당장 해결이 시급한 문제를 다룬다", b: "10년 후에 중요해질 문제를 다룬다" },
+            { category: "문제 발견·정의", q: "Q15", a: "문제의 원인을 깊이 파고드는 데 시간을 쓴다", b: "문제를 빠르게 정의하고 해결로 넘어간다" },
+            { category: "문제 발견·정의", q: "Q16", a: "개인의 삶에 직접 닿는 문제가 더 끌린다", b: "사회 구조적 문제가 더 끌린다" },
+            { category: "아이디에이션", q: "Q17", a: "문제를 완전히 없애는 솔루션이 좋다", b: "문제를 더 잘 다룰 수 있게 하는 솔루션이 좋다" },
+            { category: "아이디에이션", q: "Q18", a: "기술이 중심에 있는 솔루션이 끌린다", b: "기술 없이도 작동하는 솔루션이 끌린다" },
+            { category: "아이디에이션", q: "Q19", a: "한 번에 많은 문제를 해결하는 솔루션이 좋다", b: "하나의 문제를 완벽하게 해결하는 솔루션이 좋다" },
+            { category: "아이디에이션", q: "Q20", a: "사용자가 의식하지 못하게 작동하는 솔루션이 좋다", b: "사용자가 능동적으로 참여하는 솔루션이 좋다" },
+            { category: "아이디에이션", q: "Q21", a: "완전히 새로운 방식의 솔루션이 좋다", b: "익숙한 방식을 더 잘 다듬은 솔루션이 좋다" },
+            { category: "아이디에이션", q: "Q22", a: "단순할수록 좋은 솔루션이다", b: "복잡해도 경험이 풍부한 솔루션이 좋다" },
+            { category: "아이디에이션", q: "Q23", a: "물리적 오브제로 해결하는 솔루션이 끌린다", b: "서비스나 시스템으로 해결하는 솔루션이 끌린다" },
+            { category: "아이디에이션", q: "Q24", a: "즉각적인 변화를 만드는 솔루션이 좋다", b: "천천히 습관과 인식을 바꾸는 솔루션이 좋다" },
+            { category: "조형·디자인", q: "Q25", a: "형태는 기능에서 나와야 한다", b: "형태는 감성에서 나와야 한다" },
+            { category: "조형·디자인", q: "Q26", a: "단순하고 절제된 형태가 좋다", b: "풍부하고 복잡한 형태가 좋다" },
+            { category: "조형·디자인", q: "Q27", a: "소재의 본래 질감을 드러내는 게 좋다", b: "소재를 가공해서 새로운 질감을 만드는 게 좋다" },
+            { category: "조형·디자인", q: "Q28", a: "시간이 지나도 변하지 않는 디자인을 한다", b: "지금 이 순간에 가장 적합한 디자인을 한다" },
+            { category: "조형·디자인", q: "Q29", a: "사용할 때 느껴지는 경험이 가장 중요하다", b: "처음 봤을 때의 인상이 가장 중요하다" },
+            { category: "조형·디자인", q: "Q30", a: "제품이 어떻게 만들어졌는지 보여야 한다", b: "제품이 어떻게 만들어졌는지는 중요하지 않다" },
+            { category: "조형·디자인", q: "Q31", a: "색보다 형태가 먼저다", b: "형태보다 색이 먼저다" },
+            { category: "조형·디자인", q: "Q32", a: "디지털보다 물리적 제품이 더 끌린다", b: "물리적 제품보다 디지털이 더 끌린다" },
+            { category: "조형·디자인", q: "Q33", a: "완성된 느낌의 마감이 좋다", b: "날것의 느낌이 남아있는 마감이 좋다" },
+            { category: "마케팅·브랜딩", q: "Q34", a: "제품이 좋으면 마케팅은 따라온다", b: "마케팅도 디자인만큼 중요하다" },
+            { category: "마케팅·브랜딩", q: "Q35", a: "브랜드 스토리보다 제품 자체가 말해야 한다", b: "브랜드 스토리가 제품의 가치를 만든다" },
+            { category: "마케팅·브랜딩", q: "Q36", a: "많은 사람에게 알려지는 게 중요하다", b: "알아야 할 사람만 알면 된다" },
+            { category: "마케팅·브랜딩", q: "Q37", a: "온라인 중심으로 브랜드를 알리고 싶다", b: "오프라인 경험 중심으로 브랜드를 알리고 싶다" },
+            { category: "마케팅·브랜딩", q: "Q38", a: "브랜드 이미지는 일관성이 가장 중요하다", b: "브랜드 이미지는 유연하게 변할 수 있어야 한다" },
+            { category: "마케팅·브랜딩", q: "Q39", a: "내 이름을 전면에 내세운 브랜드를 하고 싶다", b: "브랜드 뒤에 내가 있는 게 더 좋다" },
+            { category: "마케팅·브랜딩", q: "Q40", a: "저렴하게 많이 파는 브랜드가 끌린다", b: "비싸도 제대로 파는 브랜드가 끌린다" },
+            { category: "마케팅·브랜딩", q: "Q41", a: "제품을 사용하는 장면을 보여주는 게 좋다", b: "제품 자체만 보여주는 게 좋다" },
+            { category: "브랜드 가치관", q: "Q42", a: "디자이너는 사회 문제에 목소리를 내야 한다", b: "디자이너는 작업으로만 말해야 한다" },
+            { category: "브랜드 가치관", q: "Q43", a: "하나를 깊게 파는 전문가가 되고 싶다", b: "여러 분야를 넘나드는 제너럴리스트가 되고 싶다" },
+            { category: "브랜드 가치관", q: "Q44", a: "상업적 성공과 디자인 철학은 양립할 수 있다", b: "상업적 성공을 추구하면 철학이 흔들린다" },
+            { category: "브랜드 가치관", q: "Q45", a: "클라이언트의 요구를 존중하며 작업한다", b: "내 관점을 클라이언트에게 설득한다" },
+            { category: "브랜드 가치관", q: "Q46", a: "빠르게 많은 것을 만드는 디자이너가 되고 싶다", b: "천천히 하나를 제대로 만드는 디자이너가 되고 싶다" },
+            { category: "브랜드 가치관", q: "Q47", a: "디자인은 문제를 해결하는 도구다", b: "디자인은 세계관을 표현하는 언어다" },
+            { category: "브랜드 가치관", q: "Q48", a: "나의 디자인이 많은 사람의 삶을 바꾸길 원한다", b: "나의 디자인이 한 사람의 삶을 깊이 바꾸길 원한다" },
+            { category: "브랜드 가치관", q: "Q49", a: "지속 가능성은 디자인의 필수 조건이다", b: "지속 가능성은 중요하지만 절충할 수 있다" },
+            { category: "브랜드 가치관", q: "Q50", a: "10년 후에도 내 이름으로 작업하고 싶다", b: "10년 후에는 더 큰 시스템 안에서 일하고 싶다" }
+        ];
 
-    <!-- RESULT -->
-    <div class="scr" id="sr">
-      <div class="pg"><div class="pg-fill" style="width:100%"></div></div>
-      <span class="cn tl">Designer Balance Game</span>
-      <span class="cn tr">50 / 50</span>
-      <div class="rl">
-        <div class="r-left">
-          <div class="rh-wrapper">
-             <div class="rh">완료</div>
-             <div class="rh2">했어요</div>
-          </div>
-          <div class="rdb">
-            <p class="rd">아래 결과를 복사해서<br>Claude 또는 NotebookLM에<br>붙여넣으세요.<br><br>AI가 이 데이터를 바탕으로<br>퍼스널 브랜드를 분석해줍니다.</p>
-          </div>
-          <button class="rcb" onclick="copyResult()">결과 복사하기 →</button>
-          <span class="cpn" id="cpn"></span>
-          <button class="rrb" onclick="restart()">다시 하기</button>
-        </div>
-        <div class="rr">
-          <div class="rscroll" id="rtxt"></div>
-        </div>
-      </div>
-      <span class="cn bl" style="cursor:pointer;" onclick="restart()">이전으로</span>
-    </div>
+        let currentQuestionIndex = 0;
+        let answers = new Array(quizData.length).fill(null);
+        let finalOutputText = "";
 
-  </div>
-</div>
+        const screens = {
+            intro: document.getElementById('screen-intro'),
+            question: document.getElementById('screen-question'),
+            result: document.getElementById('screen-result')
+        };
 
-<script>
-const qs=[
-  {cat:"시장 탐색",a:"대중이 쓰는 제품을 더 잘 만들고 싶다",b:"소수가 깊이 사랑하는 제품을 만들고 싶다"},
-  {cat:"시장 탐색",a:"이미 존재하는 시장에서 더 잘하고 싶다",b:"아직 없는 시장을 만들고 싶다"},
-  {cat:"시장 탐색",a:"사람들이 원한다고 말하는 것을 만든다",b:"사람들이 원하는지 몰랐던 것을 만든다"},
-  {cat:"시장 탐색",a:"트렌드가 향하는 곳에서 기회를 찾는다",b:"트렌드와 반대되는 곳에서 기회를 찾는다"},
-  {cat:"시장 탐색",a:"빠르게 성장하는 시장이 매력적이다",b:"느리지만 단단한 시장이 매력적이다"},
-  {cat:"시장 탐색",a:"글로벌 시장을 처음부터 겨냥하고 싶다",b:"로컬에서 깊이 뿌리내리고 싶다"},
-  {cat:"시장 탐색",a:"디지털 중심 시장에서 일하고 싶다",b:"물리적 제품 중심 시장에서 일하고 싶다"},
-  {cat:"시장 탐색",a:"소비자 대상 제품이 더 끌린다",b:"전문가·기업 대상 제품이 더 끌린다"},
-  {cat:"문제 발견·정의",a:"불편함을 해결하는 문제가 더 중요하다",b:"경험을 풍요롭게 하는 문제가 더 중요하다"},
-  {cat:"문제 발견·정의",a:"많은 사람이 겪는 문제를 해결하고 싶다",b:"깊이 고통받는 소수의 문제를 해결하고 싶다"},
-  {cat:"문제 발견·정의",a:"데이터로 증명된 문제를 다룬다",b:"아직 데이터는 없지만 느껴지는 문제를 다룬다"},
-  {cat:"문제 발견·정의",a:"사용자가 직접 말한 문제에서 출발한다",b:"사용자가 말하지 못한 문제에서 출발한다"},
-  {cat:"문제 발견·정의",a:"기술로 해결할 수 있는 문제가 흥미롭다",b:"기술 없이 해결해야 하는 문제가 흥미롭다"},
-  {cat:"문제 발견·정의",a:"지금 당장 해결이 시급한 문제를 다룬다",b:"10년 후에 중요해질 문제를 다룬다"},
-  {cat:"문제 발견·정의",a:"문제의 원인을 깊이 파고드는 데 시간을 쓴다",b:"문제를 빠르게 정의하고 해결로 넘어간다"},
-  {cat:"문제 발견·정의",a:"개인의 삶에 직접 닿는 문제가 더 끌린다",b:"사회 구조적 문제가 더 끌린다"},
-  {cat:"아이디에이션",a:"문제를 완전히 없애는 솔루션이 좋다",b:"문제를 더 잘 다룰 수 있게 하는 솔루션이 좋다"},
-  {cat:"아이디에이션",a:"기술이 중심에 있는 솔루션이 끌린다",b:"기술 없이도 작동하는 솔루션이 끌린다"},
-  {cat:"아이디에이션",a:"한 번에 많은 문제를 해결하는 솔루션이 좋다",b:"하나의 문제를 완벽하게 해결하는 솔루션이 좋다"},
-  {cat:"아이디에이션",a:"사용자가 의식하지 못하게 작동하는 솔루션이 좋다",b:"사용자가 능동적으로 참여하는 솔루션이 좋다"},
-  {cat:"아이디에이션",a:"완전히 새로운 방식의 솔루션이 좋다",b:"익숙한 방식을 더 잘 다듬은 솔루션이 좋다"},
-  {cat:"아이디에이션",a:"단순할수록 좋은 솔루션이다",b:"복잡해도 경험이 풍부한 솔루션이 좋다"},
-  {cat:"아이디에이션",a:"물리적 오브제로 해결하는 솔루션이 끌린다",b:"서비스나 시스템으로 해결하는 솔루션이 끌린다"},
-  {cat:"아이디에이션",a:"즉각적인 변화를 만드는 솔루션이 좋다",b:"천천히 습관과 인식을 바꾸는 솔루션이 좋다"},
-  {cat:"조형·디자인",a:"형태는 기능에서 나와야 한다",b:"형태는 감성에서 나와야 한다"},
-  {cat:"조형·디자인",a:"단순하고 절제된 형태가 좋다",b:"풍부하고 복잡한 형태가 좋다"},
-  {cat:"조형·디자인",a:"소재의 본래 질감을 드러내는 게 좋다",b:"소재를 가공해서 새로운 질감을 만드는 게 좋다"},
-  {cat:"조형·디자인",a:"시간이 지나도 변하지 않는 디자인을 한다",b:"지금 이 순간에 가장 적합한 디자인을 한다"},
-  {cat:"조형·디자인",a:"사용할 때 느껴지는 경험이 가장 중요하다",b:"처음 봤을 때의 인상이 가장 중요하다"},
-  {cat:"조형·디자인",a:"제품이 어떻게 만들어졌는지 보여야 한다",b:"제품이 어떻게 만들어졌는지는 중요하지 않다"},
-  {cat:"조형·디자인",a:"색보다 형태가 먼저다",b:"형태보다 색이 먼저다"},
-  {cat:"조형·디자인",a:"디지털보다 물리적 제품이 더 끌린다",b:"물리적 제품보다 디지털이 더 끌린다"},
-  {cat:"조형·디자인",a:"완성된 느낌의 마감이 좋다",b:"날것의 느낌이 남아있는 마감이 좋다"},
-  {cat:"마케팅·브랜딩",a:"제품이 좋으면 마케팅은 따라온다",b:"마케팅도 디자인만큼 중요하다"},
-  {cat:"마케팅·브랜딩",a:"브랜드 스토리보다 제품 자체가 말해야 한다",b:"브랜드 스토리가 제품의 가치를 만든다"},
-  {cat:"마케팅·브랜딩",a:"많은 사람에게 알려지는 게 중요하다",b:"알아야 할 사람만 알면 된다"},
-  {cat:"마케팅·브랜딩",a:"온라인 중심으로 브랜드를 알리고 싶다",b:"오프라인 경험 중심으로 브랜드를 알리고 싶다"},
-  {cat:"마케팅·브랜딩",a:"브랜드 이미지는 일관성이 가장 중요하다",b:"브랜드 이미지는 유연하게 변할 수 있어야 한다"},
-  {cat:"마케팅·브랜딩",a:"내 이름을 전면에 내세운 브랜드를 하고 싶다",b:"브랜드 뒤에 내가 있는 게 더 좋다"},
-  {cat:"마케팅·브랜딩",a:"저렴하게 많이 파는 브랜드가 끌린다",b:"비싸도 제대로 파는 브랜드가 끌린다"},
-  {cat:"마케팅·브랜딩",a:"제품을 사용하는 장면을 보여주는 게 좋다",b:"제품 자체만 보여주는 게 좋다"},
-  {cat:"브랜드 가치관",a:"디자이너는 사회 문제에 목소리를 내야 한다",b:"디자이너는 작업으로만 말해야 한다"},
-  {cat:"브랜드 가치관",a:"하나를 깊게 파는 전문가가 되고 싶다",b:"여러 분야를 넘나드는 제너럴리스트가 되고 싶다"},
-  {cat:"브랜드 가치관",a:"상업적 성공과 디자인 철학은 양립할 수 있다",b:"상업적 성공을 추구하면 철학이 흔들린다"},
-  {cat:"브랜드 가치관",a:"클라이언트의 요구를 존중하며 작업한다",b:"내 관점을 클라이언트에게 설득한다"},
-  {cat:"브랜드 가치관",a:"빠르게 많은 것을 만드는 디자이너가 되고 싶다",b:"천천히 하나를 제대로 만드는 디자이너가 되고 싶다"},
-  {cat:"브랜드 가치관",a:"디자인은 문제를 해결하는 도구다",b:"디자인은 세계관을 표현하는 언어다"},
-  {cat:"브랜드 가치관",a:"나의 디자인이 많은 사람의 삶을 바꾸길 원한다",b:"나의 디자인이 한 사람의 삶을 깊이 바꾸길 원한다"},
-  {cat:"브랜드 가치관",a:"지속 가능성은 디자인의 필수 조건이다",b:"지속 가능성은 중요하지만 절충할 수 있다"},
-  {cat:"브랜드 가치관",a:"10년 후에도 내 이름으로 작업하고 싶다",b:"10년 후에는 더 큰 시스템 안에서 일하고 싶다"}
-];
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const choiceA = document.getElementById('choice-a');
+        const choiceB = document.getElementById('choice-b');
+        const copyStatus = document.getElementById('copy-status');
 
-let cur=0, ans=new Array(qs.length).fill(null);
+        function showScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.remove('active'));
+            screens[screenName].classList.add('active');
+            
+            // Show/hide progress bar
+            progressContainer.style.display = (screenName === 'intro') ? 'none' : 'block';
+        }
 
-function show(id){
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
-}
+        function updateProgress() {
+            const percent = (currentQuestionIndex / quizData.length) * 100;
+            progressBar.style.width = `${percent}%`;
+        }
 
-function startQuiz(){ show('sq'); render(); }
+        function loadQuestion(index) {
+            const data = quizData[index];
+            const qNumber = index + 1;
+            const totalQs = quizData.length;
 
-function render(){
-  const q=qs[cur];
-  const pct=Math.max(2,Math.round((cur+1)/qs.length*100));
-  document.getElementById('pg').style.width=pct+'%';
-  document.getElementById('catl').textContent=q.cat;
-  document.getElementById('qcnt').textContent=String(cur+1).padStart(2,'0')+' / '+qs.length;
-  document.getElementById('qsec').textContent=q.cat;
-  document.getElementById('ta').textContent=q.a;
-  document.getElementById('tb').textContent=q.b;
-  document.getElementById('ca').className='ch'+(ans[cur]==='A'?' sel':'');
-  document.getElementById('cb').className='ch'+(ans[cur]==='B'?' sel':'');
-  document.getElementById('bb').disabled=cur===0;
-}
+            // Labels
+            document.getElementById('q-label-tl').textContent = data.category;
+            document.getElementById('q-label-tr').textContent = `${String(qNumber).padStart(2, '0')} / ${totalQs}`;
+            
+            // Previous Button state
+            if (index === 0) {
+                prevBtn.disabled = true;
+                prevBtn.classList.add('disabled-label');
+            } else {
+                prevBtn.disabled = false;
+                prevBtn.classList.remove('disabled-label');
+            }
 
-function pick(opt){
-  ans[cur]=opt;
-  document.getElementById('ca').className='ch'+(opt==='A'?' sel':'');
-  document.getElementById('cb').className='ch'+(opt==='B'?' sel':'');
-  setTimeout(()=>{
-    if(cur<qs.length-1){cur++;render();}
-    else{showResult();}
-  },320);
-}
+            // Content
+            document.getElementById('q-cat-heading').textContent = data.category;
+            document.getElementById('text-a').textContent = data.a;
+            document.getElementById('text-b').textContent = data.b;
 
-function goBack(){ if(cur>0){cur--;render();} }
+            // Clear previous visual selection
+            choiceA.classList.remove('selected');
+            choiceB.classList.remove('selected');
 
-function showResult(){
-  show('sr');
-  const lines=['[디자이너 밸런스게임 문답 결과]\n'];
-  let lc='';
-  qs.forEach((q,i)=>{
-    if(q.cat!==lc){lines.push('\n▶ '+q.cat);lc=q.cat;}
-    lines.push('Q'+(i+1)+'. '+q.a+' vs '+q.b+'\n→ 선택: '+(ans[i]==='A'?q.a:q.b));
-  });
-  lines.push('\n---\n이 결과를 Claude 또는 NotebookLM에 붙여넣어 분석을 진행하세요.');
-  document.getElementById('rtxt').textContent=lines.join('\n');
-}
+            // Restore if previously answered (for Back button)
+            if (answers[index] === 'a') choiceA.classList.add('selected');
+            if (answers[index] === 'b') choiceB.classList.add('selected');
 
-function copyResult(){
-  navigator.clipboard.writeText(document.getElementById('rtxt').textContent).then(()=>{
-    document.getElementById('cpn').textContent='복사됐어요 — Claude 또는 NotebookLM에 붙여넣으세요';
-  });
-}
+            updateProgress();
+        }
 
-function restart(){
-  cur=0; ans=new Array(qs.length).fill(null);
-  document.getElementById('cpn').textContent='';
-  show('si');
-}
-</script>
+        function handleSelection(choice) {
+            // Visual feedback
+            choiceA.classList.remove('selected');
+            choiceB.classList.remove('selected');
+            if (choice === 'a') choiceA.classList.add('selected');
+            if (choice === 'b') choiceB.classList.add('selected');
+
+            // Save answer
+            answers[currentQuestionIndex] = choice;
+
+            // Auto-advance with delay
+            setTimeout(() => {
+                if (currentQuestionIndex < quizData.length - 1) {
+                    currentQuestionIndex++;
+                    loadQuestion(currentQuestionIndex);
+                } else {
+                    showResults();
+                }
+            }, 320);
+        }
+
+        function showResults() {
+            updateProgress(); // Show full bar
+            showScreen('result');
+
+            let currentCat = "";
+            let resultsText = "";
+            let plainTextOutput = "디자이너 밸런스 게임 결과 분석 데이터\n==================================\n\n";
+
+            quizData.forEach((data, index) => {
+                if (data.category !== currentCat) {
+                    currentCat = data.category;
+                    resultsText += `▶ ${currentCat}\n`;
+                    plainTextOutput += `\n▶ ${currentCat}\n`;
+                }
+                const chosenText = (answers[index] === 'a') ? data.a : data.b;
+                resultsText += `${data.q}. ${data.a} vs ${data.b}\n   → 선택: ${chosenText}\n\n`;
+                plainTextOutput += `${data.q}. ${data.a} vs ${data.b} -> 선택: ${chosenText}\n`;
+            });
+
+            document.getElementById('results-text-area').textContent = resultsText;
+            finalOutputText = plainTextOutput; // Save for clipboard
+            copyStatus.textContent = ""; // Clear copy status
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            answers = new Array(quizData.length).fill(null);
+            loadQuestion(currentQuestionIndex);
+            showScreen('question');
+        }
+
+        async function copyResults() {
+            try {
+                await navigator.clipboard.writeText(finalOutputText);
+                copyStatus.innerHTML = "복사됐어요 — Claude 또는<br>NotebookLM에 붙여넣으세요";
+                copyStatus.style.color = "var(--text-secondary)";
+            } catch (err) {
+                copyStatus.textContent = "복사 실패. 직접 선택해서 복사해주세요.";
+                copyStatus.style.color = "red";
+                console.error('Failed to copy: ', err);
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // Screen 1
+        document.getElementById('start-btn').addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            loadQuestion(currentQuestionIndex);
+            showScreen('question');
+        });
+
+        // Screen 2
+        choiceA.addEventListener('click', () => handleSelection('a'));
+        choiceB.addEventListener('click', () => handleSelection('b'));
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion(currentQuestionIndex);
+            }
+        });
+
+        // Screen 3
+        document.getElementById('copy-btn').addEventListener('click', copyResults);
+        document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        document.getElementById('restart-link').addEventListener('click', restartQuiz);
+
+        // Initialization (ensure Intro is showing)
+        showScreen('intro');
+
+    </script>
 </body>
 </html>
