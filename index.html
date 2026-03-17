@@ -1,67 +1,67 @@
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-sans); }
-#app { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem; }
-.header { margin-bottom: 2rem; }
-.header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
-.header p { font-size: 14px; color: var(--color-text-secondary); }
-.progress-bar-wrap { background: var(--color-background-secondary); border-radius: 999px; height: 6px; margin-bottom: 2rem; overflow: hidden; }
-.progress-bar-fill { height: 6px; background: var(--color-text-primary); border-radius: 999px; transition: width 0.3s ease; }
-.category-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; }
-.question-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
-.q-number { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; }
-.q-text { font-size: 15px; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 12px; }
-.vs { font-size: 11px; color: var(--color-text-secondary); white-space: nowrap; padding: 2px 8px; border: 0.5px solid var(--color-border-tertiary); border-radius: 999px; }
-.options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.opt-btn { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; font-size: 13px; color: var(--color-text-primary); cursor: pointer; text-align: left; line-height: 1.5; transition: all 0.15s; }
-.opt-btn:hover { border-color: var(--color-border-primary); background: var(--color-background-primary); }
-.opt-btn.selected { border-color: var(--color-text-primary); background: var(--color-background-primary); font-weight: 500; }
-.nav { display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
-.nav-btn { background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 8px 20px; font-size: 14px; color: var(--color-text-primary); cursor: pointer; }
-.nav-btn:hover { background: var(--color-background-secondary); }
-.nav-btn.primary { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
-.nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.count-label { font-size: 13px; color: var(--color-text-secondary); }
-#result-view { display: none; }
-.result-header { margin-bottom: 1.5rem; }
-.result-header h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
-.result-header p { font-size: 14px; color: var(--color-text-secondary); }
-.result-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; font-size: 13px; color: var(--color-text-primary); line-height: 1.8; white-space: pre-wrap; font-family: var(--font-mono); max-height: 480px; overflow-y: auto; }
-.copy-btn { width: 100%; background: var(--color-text-primary); color: var(--color-background-primary); border: none; border-radius: var(--border-radius-md); padding: 12px; font-size: 14px; cursor: pointer; margin-bottom: 8px; }
+#app { max-width: 640px; margin: 0 auto; padding: 2rem 1rem; font-family: var(--font-sans); }
+h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 12px; }
+.desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 2rem; padding: 1rem; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
+.start-btn { display: block; width: 100%; padding: 14px; background: var(--color-text-primary); color: var(--color-background-primary); border: none; border-radius: var(--border-radius-md); font-size: 15px; cursor: pointer; margin-bottom: 10px; }
+.start-btn:hover { opacity: 0.85; }
+.start-info { text-align: center; font-size: 13px; color: var(--color-text-secondary); }
+.progress-wrap { height: 4px; background: var(--color-background-secondary); border-radius: 999px; margin-bottom: 1.5rem; overflow: hidden; }
+.progress-fill { height: 4px; background: var(--color-text-primary); border-radius: 999px; transition: width 0.25s ease; }
+.meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+.cat-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+.q-count { font-size: 12px; color: var(--color-text-secondary); }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.choice-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1rem; font-size: 13px; color: var(--color-text-primary); cursor: pointer; line-height: 1.6; text-align: center; transition: all 0.15s; }
+.choice-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
+.choice-card.selected { border-color: var(--color-text-primary); border-width: 1.5px; background: var(--color-background-primary); font-weight: 500; }
+.vs-badge { display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--color-text-secondary); padding: 2px 8px; }
+.nav { display: flex; align-items: center; justify-content: space-between; }
+.back-btn { background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
+.back-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.skip-hint { font-size: 12px; color: var(--color-text-secondary); }
+.result-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.result-desc { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.25rem; line-height: 1.6; }
+.result-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; font-size: 12px; color: var(--color-text-primary); line-height: 1.9; white-space: pre-wrap; font-family: var(--font-mono); max-height: 400px; overflow-y: auto; margin-bottom: 1rem; }
+.copy-btn { width: 100%; padding: 13px; background: var(--color-text-primary); color: var(--color-background-primary); border: none; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; margin-bottom: 8px; }
 .copy-btn:hover { opacity: 0.85; }
-.restart-btn { width: 100%; background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
+.restart-btn { width: 100%; padding: 10px; background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
 .copy-notice { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-top: 6px; }
+@media (max-width: 480px) {
+  .choices { grid-template-columns: 1fr; }
+}
 </style>
 
 <div id="app">
-  <div id="quiz-view">
-    <div class="header">
-      <h1>디자이너 밸런스게임</h1>
-      <p>두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.</p>
+  <div id="intro">
+    <h1>디자이너 밸런스게임</h1>
+    <p class="subtitle">나의 디자인 가치관과 우선순위를 발견하는 도구</p>
+    <div class="desc">두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.<br>선택의 패턴이 나의 브랜드 철학과 디자인 성향을 드러냅니다.<br>결과는 AI 퍼스널 브랜드 분석의 입력 데이터로 활용됩니다.</div>
+    <button class="start-btn" onclick="startQuiz()">시작하기</button>
+    <p class="start-info">총 50문항 · 약 10분 소요</p>
+  </div>
+
+  <div id="quiz" style="display:none">
+    <div class="progress-wrap"><div class="progress-fill" id="prog"></div></div>
+    <div class="meta">
+      <span class="cat-label" id="cat"></span>
+      <span class="q-count" id="qcount"></span>
     </div>
-    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress" style="width:2%"></div></div>
-    <div class="category-label" id="cat-label"></div>
-    <div class="question-card">
-      <div class="q-number" id="q-number"></div>
-      <div class="q-text" id="q-text"></div>
-      <div class="options">
-        <button class="opt-btn" id="opt-a" onclick="selectOption('A')"></button>
-        <button class="opt-btn" id="opt-b" onclick="selectOption('B')"></button>
-      </div>
+    <div class="choices">
+      <div class="choice-card" id="card-a" onclick="pick('A')"></div>
+      <div class="choice-card" id="card-b" onclick="pick('B')"></div>
     </div>
     <div class="nav">
-      <button class="nav-btn" id="prev-btn" onclick="prevQ()" disabled>이전</button>
-      <span class="count-label" id="count-label"></span>
-      <button class="nav-btn primary" id="next-btn" onclick="nextQ()" disabled>다음</button>
+      <button class="back-btn" id="back-btn" onclick="goBack()" disabled>이전</button>
+      <span class="skip-hint">선택하면 자동으로 넘어갑니다</span>
     </div>
   </div>
 
-  <div id="result-view">
-    <div class="result-header">
-      <h2>문답 결과</h2>
-      <p>아래 텍스트를 복사해서 Claude 또는 NotebookLM에 붙여넣으세요.</p>
-    </div>
+  <div id="result" style="display:none">
+    <p class="result-title">완료했어요</p>
+    <p class="result-desc">아래 결과를 복사해서 Claude 또는 NotebookLM에 붙여넣으세요.<br>AI가 이 데이터를 바탕으로 퍼스널 브랜드를 분석해줍니다.</p>
     <div class="result-box" id="result-text"></div>
     <button class="copy-btn" onclick="copyResult()">결과 복사하기</button>
     <div class="copy-notice" id="copy-notice"></div>
@@ -70,129 +70,119 @@ body { font-family: var(--font-sans); }
 </div>
 
 <script>
-const questions = [
-  { cat: "시장 탐색", a: "대중이 쓰는 제품을 더 잘 만들고 싶다", b: "소수가 깊이 사랑하는 제품을 만들고 싶다" },
-  { cat: "시장 탐색", a: "이미 존재하는 시장에서 더 잘하고 싶다", b: "아직 없는 시장을 만들고 싶다" },
-  { cat: "시장 탐색", a: "사람들이 원한다고 말하는 것을 만든다", b: "사람들이 원하는지 몰랐던 것을 만든다" },
-  { cat: "시장 탐색", a: "트렌드가 향하는 곳에서 기회를 찾는다", b: "트렌드와 반대되는 곳에서 기회를 찾는다" },
-  { cat: "시장 탐색", a: "빠르게 성장하는 시장이 매력적이다", b: "느리지만 단단한 시장이 매력적이다" },
-  { cat: "시장 탐색", a: "글로벌 시장을 처음부터 겨냥하고 싶다", b: "로컬에서 깊이 뿌리내리고 싶다" },
-  { cat: "시장 탐색", a: "디지털 중심 시장에서 일하고 싶다", b: "물리적 제품 중심 시장에서 일하고 싶다" },
-  { cat: "시장 탐색", a: "소비자 대상 제품이 더 끌린다", b: "전문가·기업 대상 제품이 더 끌린다" },
-  { cat: "문제 발견·정의", a: "불편함을 해결하는 문제가 더 중요하다", b: "경험을 풍요롭게 하는 문제가 더 중요하다" },
-  { cat: "문제 발견·정의", a: "많은 사람이 겪는 문제를 해결하고 싶다", b: "깊이 고통받는 소수의 문제를 해결하고 싶다" },
-  { cat: "문제 발견·정의", a: "데이터로 증명된 문제를 다룬다", b: "아직 데이터는 없지만 느껴지는 문제를 다룬다" },
-  { cat: "문제 발견·정의", a: "사용자가 직접 말한 문제에서 출발한다", b: "사용자가 말하지 못한 문제에서 출발한다" },
-  { cat: "문제 발견·정의", a: "기술로 해결할 수 있는 문제가 흥미롭다", b: "기술 없이 해결해야 하는 문제가 흥미롭다" },
-  { cat: "문제 발견·정의", a: "지금 당장 해결이 시급한 문제를 다룬다", b: "10년 후에 중요해질 문제를 다룬다" },
-  { cat: "문제 발견·정의", a: "문제의 원인을 깊이 파고드는 데 시간을 쓴다", b: "문제를 빠르게 정의하고 해결로 넘어간다" },
-  { cat: "문제 발견·정의", a: "개인의 삶에 직접 닿는 문제가 더 끌린다", b: "사회 구조적 문제가 더 끌린다" },
-  { cat: "아이디에이션", a: "문제를 완전히 없애는 솔루션이 좋다", b: "문제를 더 잘 다룰 수 있게 하는 솔루션이 좋다" },
-  { cat: "아이디에이션", a: "기술이 중심에 있는 솔루션이 끌린다", b: "기술 없이도 작동하는 솔루션이 끌린다" },
-  { cat: "아이디에이션", a: "한 번에 많은 문제를 해결하는 솔루션이 좋다", b: "하나의 문제를 완벽하게 해결하는 솔루션이 좋다" },
-  { cat: "아이디에이션", a: "사용자가 의식하지 못하게 작동하는 솔루션이 좋다", b: "사용자가 능동적으로 참여하는 솔루션이 좋다" },
-  { cat: "아이디에이션", a: "완전히 새로운 방식의 솔루션이 좋다", b: "익숙한 방식을 더 잘 다듬은 솔루션이 좋다" },
-  { cat: "아이디에이션", a: "단순할수록 좋은 솔루션이다", b: "복잡해도 경험이 풍부한 솔루션이 좋다" },
-  { cat: "아이디에이션", a: "물리적 오브제로 해결하는 솔루션이 끌린다", b: "서비스나 시스템으로 해결하는 솔루션이 끌린다" },
-  { cat: "아이디에이션", a: "즉각적인 변화를 만드는 솔루션이 좋다", b: "천천히 습관과 인식을 바꾸는 솔루션이 좋다" },
-  { cat: "조형·디자인", a: "형태는 기능에서 나와야 한다", b: "형태는 감성에서 나와야 한다" },
-  { cat: "조형·디자인", a: "단순하고 절제된 형태가 좋다", b: "풍부하고 복잡한 형태가 좋다" },
-  { cat: "조형·디자인", a: "소재의 본래 질감을 드러내는 게 좋다", b: "소재를 가공해서 새로운 질감을 만드는 게 좋다" },
-  { cat: "조형·디자인", a: "시간이 지나도 변하지 않는 디자인을 한다", b: "지금 이 순간에 가장 적합한 디자인을 한다" },
-  { cat: "조형·디자인", a: "사용할 때 느껴지는 경험이 가장 중요하다", b: "처음 봤을 때의 인상이 가장 중요하다" },
-  { cat: "조형·디자인", a: "제품이 어떻게 만들어졌는지 보여야 한다", b: "제품이 어떻게 만들어졌는지는 중요하지 않다" },
-  { cat: "조형·디자인", a: "색보다 형태가 먼저다", b: "형태보다 색이 먼저다" },
-  { cat: "조형·디자인", a: "디지털보다 물리적 제품이 더 끌린다", b: "물리적 제품보다 디지털이 더 끌린다" },
-  { cat: "조형·디자인", a: "완성된 느낌의 마감이 좋다", b: "날것의 느낌이 남아있는 마감이 좋다" },
-  { cat: "마케팅·브랜딩", a: "제품이 좋으면 마케팅은 따라온다", b: "마케팅도 디자인만큼 중요하다" },
-  { cat: "마케팅·브랜딩", a: "브랜드 스토리보다 제품 자체가 말해야 한다", b: "브랜드 스토리가 제품의 가치를 만든다" },
-  { cat: "마케팅·브랜딩", a: "많은 사람에게 알려지는 게 중요하다", b: "알아야 할 사람만 알면 된다" },
-  { cat: "마케팅·브랜딩", a: "온라인 중심으로 브랜드를 알리고 싶다", b: "오프라인 경험 중심으로 브랜드를 알리고 싶다" },
-  { cat: "마케팅·브랜딩", a: "브랜드 이미지는 일관성이 가장 중요하다", b: "브랜드 이미지는 유연하게 변할 수 있어야 한다" },
-  { cat: "마케팅·브랜딩", a: "내 이름을 전면에 내세운 브랜드를 하고 싶다", b: "브랜드 뒤에 내가 있는 게 더 좋다" },
-  { cat: "마케팅·브랜딩", a: "저렴하게 많이 파는 브랜드가 끌린다", b: "비싸도 제대로 파는 브랜드가 끌린다" },
-  { cat: "마케팅·브랜딩", a: "제품을 사용하는 장면을 보여주는 게 좋다", b: "제품 자체만 보여주는 게 좋다" },
-  { cat: "브랜드 가치관", a: "디자이너는 사회 문제에 목소리를 내야 한다", b: "디자이너는 작업으로만 말해야 한다" },
-  { cat: "브랜드 가치관", a: "하나를 깊게 파는 전문가가 되고 싶다", b: "여러 분야를 넘나드는 제너럴리스트가 되고 싶다" },
-  { cat: "브랜드 가치관", a: "상업적 성공과 디자인 철학은 양립할 수 있다", b: "상업적 성공을 추구하면 철학이 흔들린다" },
-  { cat: "브랜드 가치관", a: "클라이언트의 요구를 존중하며 작업한다", b: "내 관점을 클라이언트에게 설득한다" },
-  { cat: "브랜드 가치관", a: "빠르게 많은 것을 만드는 디자이너가 되고 싶다", b: "천천히 하나를 제대로 만드는 디자이너가 되고 싶다" },
-  { cat: "브랜드 가치관", a: "디자인은 문제를 해결하는 도구다", b: "디자인은 세계관을 표현하는 언어다" },
-  { cat: "브랜드 가치관", a: "나의 디자인이 많은 사람의 삶을 바꾸길 원한다", b: "나의 디자인이 한 사람의 삶을 깊이 바꾸길 원한다" },
-  { cat: "브랜드 가치관", a: "지속 가능성은 디자인의 필수 조건이다", b: "지속 가능성은 중요하지만 절충할 수 있다" },
-  { cat: "브랜드 가치관", a: "10년 후에도 내 이름으로 작업하고 싶다", b: "10년 후에는 더 큰 시스템 안에서 일하고 싶다" }
+const qs = [
+  {cat:"시장 탐색",a:"대중이 쓰는 제품을 더 잘 만들고 싶다",b:"소수가 깊이 사랑하는 제품을 만들고 싶다"},
+  {cat:"시장 탐색",a:"이미 존재하는 시장에서 더 잘하고 싶다",b:"아직 없는 시장을 만들고 싶다"},
+  {cat:"시장 탐색",a:"사람들이 원한다고 말하는 것을 만든다",b:"사람들이 원하는지 몰랐던 것을 만든다"},
+  {cat:"시장 탐색",a:"트렌드가 향하는 곳에서 기회를 찾는다",b:"트렌드와 반대되는 곳에서 기회를 찾는다"},
+  {cat:"시장 탐색",a:"빠르게 성장하는 시장이 매력적이다",b:"느리지만 단단한 시장이 매력적이다"},
+  {cat:"시장 탐색",a:"글로벌 시장을 처음부터 겨냥하고 싶다",b:"로컬에서 깊이 뿌리내리고 싶다"},
+  {cat:"시장 탐색",a:"디지털 중심 시장에서 일하고 싶다",b:"물리적 제품 중심 시장에서 일하고 싶다"},
+  {cat:"시장 탐색",a:"소비자 대상 제품이 더 끌린다",b:"전문가·기업 대상 제품이 더 끌린다"},
+  {cat:"문제 발견·정의",a:"불편함을 해결하는 문제가 더 중요하다",b:"경험을 풍요롭게 하는 문제가 더 중요하다"},
+  {cat:"문제 발견·정의",a:"많은 사람이 겪는 문제를 해결하고 싶다",b:"깊이 고통받는 소수의 문제를 해결하고 싶다"},
+  {cat:"문제 발견·정의",a:"데이터로 증명된 문제를 다룬다",b:"아직 데이터는 없지만 느껴지는 문제를 다룬다"},
+  {cat:"문제 발견·정의",a:"사용자가 직접 말한 문제에서 출발한다",b:"사용자가 말하지 못한 문제에서 출발한다"},
+  {cat:"문제 발견·정의",a:"기술로 해결할 수 있는 문제가 흥미롭다",b:"기술 없이 해결해야 하는 문제가 흥미롭다"},
+  {cat:"문제 발견·정의",a:"지금 당장 해결이 시급한 문제를 다룬다",b:"10년 후에 중요해질 문제를 다룬다"},
+  {cat:"문제 발견·정의",a:"문제의 원인을 깊이 파고드는 데 시간을 쓴다",b:"문제를 빠르게 정의하고 해결로 넘어간다"},
+  {cat:"문제 발견·정의",a:"개인의 삶에 직접 닿는 문제가 더 끌린다",b:"사회 구조적 문제가 더 끌린다"},
+  {cat:"아이디에이션",a:"문제를 완전히 없애는 솔루션이 좋다",b:"문제를 더 잘 다룰 수 있게 하는 솔루션이 좋다"},
+  {cat:"아이디에이션",a:"기술이 중심에 있는 솔루션이 끌린다",b:"기술 없이도 작동하는 솔루션이 끌린다"},
+  {cat:"아이디에이션",a:"한 번에 많은 문제를 해결하는 솔루션이 좋다",b:"하나의 문제를 완벽하게 해결하는 솔루션이 좋다"},
+  {cat:"아이디에이션",a:"사용자가 의식하지 못하게 작동하는 솔루션이 좋다",b:"사용자가 능동적으로 참여하는 솔루션이 좋다"},
+  {cat:"아이디에이션",a:"완전히 새로운 방식의 솔루션이 좋다",b:"익숙한 방식을 더 잘 다듬은 솔루션이 좋다"},
+  {cat:"아이디에이션",a:"단순할수록 좋은 솔루션이다",b:"복잡해도 경험이 풍부한 솔루션이 좋다"},
+  {cat:"아이디에이션",a:"물리적 오브제로 해결하는 솔루션이 끌린다",b:"서비스나 시스템으로 해결하는 솔루션이 끌린다"},
+  {cat:"아이디에이션",a:"즉각적인 변화를 만드는 솔루션이 좋다",b:"천천히 습관과 인식을 바꾸는 솔루션이 좋다"},
+  {cat:"조형·디자인",a:"형태는 기능에서 나와야 한다",b:"형태는 감성에서 나와야 한다"},
+  {cat:"조형·디자인",a:"단순하고 절제된 형태가 좋다",b:"풍부하고 복잡한 형태가 좋다"},
+  {cat:"조형·디자인",a:"소재의 본래 질감을 드러내는 게 좋다",b:"소재를 가공해서 새로운 질감을 만드는 게 좋다"},
+  {cat:"조형·디자인",a:"시간이 지나도 변하지 않는 디자인을 한다",b:"지금 이 순간에 가장 적합한 디자인을 한다"},
+  {cat:"조형·디자인",a:"사용할 때 느껴지는 경험이 가장 중요하다",b:"처음 봤을 때의 인상이 가장 중요하다"},
+  {cat:"조형·디자인",a:"제품이 어떻게 만들어졌는지 보여야 한다",b:"제품이 어떻게 만들어졌는지는 중요하지 않다"},
+  {cat:"조형·디자인",a:"색보다 형태가 먼저다",b:"형태보다 색이 먼저다"},
+  {cat:"조형·디자인",a:"디지털보다 물리적 제품이 더 끌린다",b:"물리적 제품보다 디지털이 더 끌린다"},
+  {cat:"조형·디자인",a:"완성된 느낌의 마감이 좋다",b:"날것의 느낌이 남아있는 마감이 좋다"},
+  {cat:"마케팅·브랜딩",a:"제품이 좋으면 마케팅은 따라온다",b:"마케팅도 디자인만큼 중요하다"},
+  {cat:"마케팅·브랜딩",a:"브랜드 스토리보다 제품 자체가 말해야 한다",b:"브랜드 스토리가 제품의 가치를 만든다"},
+  {cat:"마케팅·브랜딩",a:"많은 사람에게 알려지는 게 중요하다",b:"알아야 할 사람만 알면 된다"},
+  {cat:"마케팅·브랜딩",a:"온라인 중심으로 브랜드를 알리고 싶다",b:"오프라인 경험 중심으로 브랜드를 알리고 싶다"},
+  {cat:"마케팅·브랜딩",a:"브랜드 이미지는 일관성이 가장 중요하다",b:"브랜드 이미지는 유연하게 변할 수 있어야 한다"},
+  {cat:"마케팅·브랜딩",a:"내 이름을 전면에 내세운 브랜드를 하고 싶다",b:"브랜드 뒤에 내가 있는 게 더 좋다"},
+  {cat:"마케팅·브랜딩",a:"저렴하게 많이 파는 브랜드가 끌린다",b:"비싸도 제대로 파는 브랜드가 끌린다"},
+  {cat:"마케팅·브랜딩",a:"제품을 사용하는 장면을 보여주는 게 좋다",b:"제품 자체만 보여주는 게 좋다"},
+  {cat:"브랜드 가치관",a:"디자이너는 사회 문제에 목소리를 내야 한다",b:"디자이너는 작업으로만 말해야 한다"},
+  {cat:"브랜드 가치관",a:"하나를 깊게 파는 전문가가 되고 싶다",b:"여러 분야를 넘나드는 제너럴리스트가 되고 싶다"},
+  {cat:"브랜드 가치관",a:"상업적 성공과 디자인 철학은 양립할 수 있다",b:"상업적 성공을 추구하면 철학이 흔들린다"},
+  {cat:"브랜드 가치관",a:"클라이언트의 요구를 존중하며 작업한다",b:"내 관점을 클라이언트에게 설득한다"},
+  {cat:"브랜드 가치관",a:"빠르게 많은 것을 만드는 디자이너가 되고 싶다",b:"천천히 하나를 제대로 만드는 디자이너가 되고 싶다"},
+  {cat:"브랜드 가치관",a:"디자인은 문제를 해결하는 도구다",b:"디자인은 세계관을 표현하는 언어다"},
+  {cat:"브랜드 가치관",a:"나의 디자인이 많은 사람의 삶을 바꾸길 원한다",b:"나의 디자인이 한 사람의 삶을 깊이 바꾸길 원한다"},
+  {cat:"브랜드 가치관",a:"지속 가능성은 디자인의 필수 조건이다",b:"지속 가능성은 중요하지만 절충할 수 있다"},
+  {cat:"브랜드 가치관",a:"10년 후에도 내 이름으로 작업하고 싶다",b:"10년 후에는 더 큰 시스템 안에서 일하고 싶다"}
 ];
 
-const total = questions.length;
-let current = 0;
-let answers = new Array(total).fill(null);
+let cur = 0;
+let answers = new Array(qs.length).fill(null);
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  render();
+}
 
 function render() {
-  const q = questions[current];
-  document.getElementById('cat-label').textContent = q.cat;
-  document.getElementById('q-number').textContent = `Q${current + 1}`;
-  document.getElementById('q-text').innerHTML = `<span>${q.a}</span><span class="vs">vs</span><span>${q.b}</span>`;
-  document.getElementById('opt-a').textContent = 'A  ' + q.a;
-  document.getElementById('opt-b').textContent = 'B  ' + q.b;
-  document.getElementById('opt-a').className = 'opt-btn' + (answers[current] === 'A' ? ' selected' : '');
-  document.getElementById('opt-b').className = 'opt-btn' + (answers[current] === 'B' ? ' selected' : '');
-  document.getElementById('count-label').textContent = `${current + 1} / ${total}`;
-  document.getElementById('prev-btn').disabled = current === 0;
-  const isLast = current === total - 1;
-  const nextBtn = document.getElementById('next-btn');
-  nextBtn.textContent = isLast ? '결과 보기' : '다음';
-  nextBtn.disabled = answers[current] === null;
-  document.getElementById('progress').style.width = Math.max(2, Math.round((current + 1) / total * 100)) + '%';
+  const q = qs[cur];
+  document.getElementById('cat').textContent = q.cat;
+  document.getElementById('qcount').textContent = `${cur + 1} / ${qs.length}`;
+  document.getElementById('prog').style.width = Math.max(2, Math.round((cur + 1) / qs.length * 100)) + '%';
+  document.getElementById('card-a').textContent = q.a;
+  document.getElementById('card-b').textContent = q.b;
+  document.getElementById('card-a').className = 'choice-card' + (answers[cur] === 'A' ? ' selected' : '');
+  document.getElementById('card-b').className = 'choice-card' + (answers[cur] === 'B' ? ' selected' : '');
+  document.getElementById('back-btn').disabled = cur === 0;
 }
 
-function selectOption(opt) {
-  answers[current] = opt;
-  render();
+function pick(opt) {
+  answers[cur] = opt;
+  document.getElementById('card-a').className = 'choice-card' + (opt === 'A' ? ' selected' : '');
+  document.getElementById('card-b').className = 'choice-card' + (opt === 'B' ? ' selected' : '');
+  setTimeout(() => {
+    if (cur < qs.length - 1) { cur++; render(); }
+    else { showResult(); }
+  }, 300);
 }
 
-function nextQ() {
-  if (current === total - 1) { showResult(); return; }
-  current++;
-  render();
-}
-
-function prevQ() {
-  if (current > 0) { current--; render(); }
+function goBack() {
+  if (cur > 0) { cur--; render(); }
 }
 
 function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
   const lines = ['[디자이너 밸런스게임 문답 결과]\n'];
   let lastCat = '';
-  questions.forEach((q, i) => {
-    if (q.cat !== lastCat) {
-      lines.push(`\n▶ ${q.cat}`);
-      lastCat = q.cat;
-    }
+  qs.forEach((q, i) => {
+    if (q.cat !== lastCat) { lines.push(`\n▶ ${q.cat}`); lastCat = q.cat; }
     const chosen = answers[i] === 'A' ? q.a : q.b;
-    const other = answers[i] === 'A' ? q.b : q.a;
     lines.push(`Q${i + 1}. ${q.a} vs ${q.b}\n→ 선택: ${chosen}`);
   });
   lines.push('\n---\n이 결과를 Claude 또는 NotebookLM에 붙여넣어 분석을 진행하세요.');
   document.getElementById('result-text').textContent = lines.join('\n');
-  document.getElementById('quiz-view').style.display = 'none';
-  document.getElementById('result-view').style.display = 'block';
 }
 
 function copyResult() {
-  const text = document.getElementById('result-text').textContent;
-  navigator.clipboard.writeText(text).then(() => {
+  navigator.clipboard.writeText(document.getElementById('result-text').textContent).then(() => {
     document.getElementById('copy-notice').textContent = '복사됐어요. Claude 또는 NotebookLM에 붙여넣으세요.';
   });
 }
 
 function restart() {
-  current = 0;
-  answers = new Array(total).fill(null);
-  document.getElementById('quiz-view').style.display = 'block';
-  document.getElementById('result-view').style.display = 'none';
+  cur = 0;
+  answers = new Array(qs.length).fill(null);
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('intro').style.display = 'block';
   document.getElementById('copy-notice').textContent = '';
-  render();
 }
-
-render();
 </script>
