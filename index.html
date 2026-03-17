@@ -9,7 +9,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #1a1a1a;
+      background: #111;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -18,38 +18,49 @@
       overflow: hidden;
     }
 
-    /* 모니터 이미지 + 화면 오버레이를 담는 컨테이너 */
+    /*
+      이미지 원본 비율을 유지하면서 화면을 꽉 채우는 래퍼.
+      monitor.png 원본 비율 기준으로 padding-top 설정.
+      (이미지 비율: 약 16:9 → 56.25%)
+    */
     .scene {
       position: relative;
       width: 100vw;
       height: 100vh;
+      overflow: hidden;
     }
 
-    /* monitor.png를 화면 꽉 차게 */
+    /* 이미지를 화면에 꽉 채우되 비율 유지 (cover) */
     .monitor-img {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: cover;
     }
 
     /*
-      모니터 화면 영역에 퀴즈 UI 오버레이.
-      이미지 분석 결과 모니터 스크린은 이미지 기준으로 대략:
-        - 좌: 15.5% ~ 우: 84%
-        - 상: 10% ~ 하: 88%
-      아래 % 값은 이미지 비율에 맞게 조정하세요.
+      모니터 화면 오버레이 위치.
+      스크린샷 분석 기준 이미지 내 모니터 스크린 좌표:
+        left: 15.5%, top: 7%, width: 69%, height: 82%
     */
     .screen-overlay {
       position: absolute;
-      left: 15.5%;
-      top: 10%;
-      width: 68.5%;   /* 84% - 15.5% */
-      height: 78%;    /* 88% - 10% */
+      left: 50%;
+      top: 50%;
+      /* 이미지 전체 기준 비율로 변환 */
+      transform: translate(-50%, -50%);
+      width: 69%;
+      height: 82%;
+      /* 이미지 중심 기준으로 오프셋 조정 */
+      margin-left: 0%;
+      margin-top: -1%;
       overflow: hidden;
-      border-radius: 4px;
+      border-radius: 6px;
     }
 
     /* ───── 퀴즈 UI 스타일 ───── */
