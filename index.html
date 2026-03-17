@@ -261,6 +261,21 @@
       color: var(--text-primary);
       margin-bottom: 5.6cqw;
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2cqw;
+    }
+
+    .cat-icon {
+      width: 3.0cqw;
+      height: 3.0cqw;
+      stroke: var(--text-primary);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
     }
 
     .choices-container {
@@ -564,12 +579,12 @@
     ];
 
     const categoryIcons = {
-      "시장 탐색": "🧭",
-      "문제 발견·정의": "🔍",
-      "아이디에이션": "✏️",
-      "조형·디자인": "📐",
-      "마케팅·브랜딩": "📢",
-      "브랜드 가치관": "💎"
+      "시장 탐색": `<svg class="cat-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`,
+      "문제 발견·정의": `<svg class="cat-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+      "아이디에이션": `<svg class="cat-icon" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
+      "조형·디자인": `<svg class="cat-icon" viewBox="0 0 24 24"><path d="M3 21L12 3l9 18H3z"/><line x1="12" y1="13" x2="16" y2="21"/></svg>`,
+      "마케팅·브랜딩": `<svg class="cat-icon" viewBox="0 0 24 24"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>`,
+      "브랜드 가치관": `<svg class="cat-icon" viewBox="0 0 24 24"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="2" y1="9" x2="22" y2="9"/><line x1="12" y1="3" x2="12" y2="22"/></svg>`
     };
 
     let currentQuestionIndex = 0;
@@ -621,7 +636,7 @@
       }
 
       // Content
-      document.getElementById('q-cat-heading').textContent = `${categoryIcons[data.category]} ${data.category}`;
+      document.getElementById('q-cat-heading').innerHTML = `${categoryIcons[data.category]} <span>${data.category}</span>`;
       document.getElementById('text-a').textContent = data.a;
       document.getElementById('text-b').textContent = data.b;
 
@@ -668,9 +683,8 @@
       quizData.forEach((data, index) => {
         if (data.category !== currentCat) {
           currentCat = data.category;
-          const icon = categoryIcons[currentCat];
-          resultsText += `${icon} ${currentCat}\n`;
-          plainTextOutput += `\n${icon} ${currentCat}\n`;
+          resultsText += `▶ ${currentCat}\n`;
+          plainTextOutput += `\n▶ ${currentCat}\n`;
         }
         const chosenText = (answers[index] === 'a') ? data.a : data.b;
         resultsText += `${data.q}. ${data.a} vs ${data.b}\n   → 선택: ${chosenText}\n\n`;
