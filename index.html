@@ -35,7 +35,7 @@
 
         /*
         이미지와 오버레이를 감싸는 래퍼 (화면을 꽉 채우면서 원본 비율 유지).
-        monitor2.jpeg 원본 해상도 (11008 x 6144)을 기준으로 비율 고정.
+        image.jpg 원본 해상도 (22016 x 12288)을 기준으로 비율 고정.
         */
         .scene {
             position: absolute;
@@ -43,9 +43,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 100vw;
-            height: calc(100vw * (6144 / 11008));
+            height: calc(100vw * (12288 / 22016));
             min-height: 100vh;
-            min-width: calc(100vh * (11008 / 6144));
+            min-width: calc(100vh * (22016 / 12288));
             overflow: hidden;
         }
 
@@ -62,23 +62,24 @@
         /*
         모니터 화면 오버레이 위치.
         비율을 스크린 비율인 2722x1690 으로 강제 고정!
+        새로운 image.jpg에 맞게 폭 조정 및 센터 배치
         */
         .screen-overlay {
             position: absolute;
             left: 50%;
             top: 48.6%;        /* 위아래 센터 미세 조정 */
             transform: translate(-50%, -50%);
-            width: 70.885%;    /* 이미지 가로 기준 화면 비중 (약 70.8%) */
+            width: 66.5%;      /* 모니터 베젤을 넘지 않게 넓이 줄임 (조정 필요시 이 값 수정) */
             aspect-ratio: 2722 / 1690;
             height: auto;
-            border-radius: 6px; /* 맥 둥근 모서리 느낌 */
+            border-radius: 6px; 
             z-index: 10;
             
-            background-color: var(--bg-color);
+            background-color: transparent; /* 이미지 자체의 흰색 배경을 그대로 보여주기 위해 투명화 */
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            container-type: inline-size; /* 컨테이너 쿼리 사이즈 지원 */
+            container-type: inline-size;
         }
 
         /* cqw (Container Query Width) 설정 적용하여 오버레이 창 비율대로 요소들이 줄어들도록 변경 */
@@ -362,8 +363,8 @@
 <body>
 
     <div class="scene">
-        <!-- 배경: monitor2.jpeg -->
-        <img class="monitor-img" src="monitor2.jpeg" alt="monitor" />
+        <!-- 배경: image.jpg -->
+        <img class="monitor-img" src="image.jpg" alt="monitor" />
 
         <!-- 모니터 화면 위에 올라가는 인터랙티브 UI -->
         <div class="screen-overlay">
