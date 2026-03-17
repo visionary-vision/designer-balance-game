@@ -6,7 +6,7 @@
     <title>Designer Balance Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;300;400&family=DM+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500&family=DM+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #F2F1EC;
@@ -15,7 +15,7 @@
             --text-tertiary: #b8b7b0;
             --rule-color: #C8C7C0;
             --mono-text: #777770;
-            --font-main: 'DM Sans', sans-serif;
+            --font-main: 'Urbanist', sans-serif;
             --font-mono: 'DM Mono', monospace;
         }
 
@@ -124,7 +124,7 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 400;
         }
 
         .label-tl { top: 2.1cqw; left: 2.1cqw; }
@@ -159,8 +159,7 @@
 
         .intro-heading {
             font-size: 5.3cqw;
-            font-weight: 200;
-            text-transform: uppercase;
+            font-weight: 500;
             letter-spacing: 0.07em;
             color: var(--text-primary);
             margin-bottom: 0.7cqw;
@@ -168,37 +167,26 @@
 
         .intro-subtitle {
             font-size: 1.5cqw;
-            font-weight: 300;
+            font-weight: 400;
             color: var(--text-secondary);
             margin-bottom: 2.8cqw;
         }
 
-        .intro-text-blocks {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5.6cqw;
-            width: 80%;
-            margin: 2.8cqw auto;
-            text-align: left;
-        }
-
-        .intro-block {
-            border-top: 1px solid var(--rule-color);
-            padding-top: 1.4cqw;
+        .intro-desc {
             font-size: 1.4cqw;
-            font-weight: 300;
+            font-weight: 400;
             line-height: 1.6;
             color: var(--text-primary);
+            margin: 2.5cqw auto;
+            text-align: center;
+            width: 80%;
         }
-
-        .intro-block.selected { border-top: 2px solid var(--text-primary); }
-        .intro-block.selected::before { content: '■ '; color: var(--text-primary); }
 
         #start-btn {
             font-size: 1.8cqw;
-            font-weight: 300;
+            font-weight: 500;
             color: var(--text-primary);
-            margin-top: 4.2cqw;
+            margin-top: 2cqw;
             transition: gap 0.2s ease;
             display: inline-flex;
             align-items: center;
@@ -211,7 +199,7 @@
             font-size: 1.2cqw;
             color: var(--text-tertiary);
             margin-top: 1.4cqw;
-            font-weight: 300;
+            font-weight: 400;
         }
 
         /* --- SCREEN 2: QUESTION --- */
@@ -222,7 +210,7 @@
 
         .question-cat-heading {
             font-size: 4.2cqw;
-            font-weight: 200;
+            font-weight: 500;
             text-transform: uppercase;
             color: var(--text-primary);
             margin-bottom: 5.6cqw;
@@ -245,12 +233,12 @@
             position: relative;
         }
 
-        .choice-block:hover { font-weight: 400; }
-        .choice-block.selected { border-top: 2px solid var(--text-primary); }
+        .choice-block:hover { font-weight: 500; }
+        .choice-block.selected { border-top: 2px solid var(--text-primary); font-weight: 500; }
 
         .choice-text {
             font-size: 1.5cqw;
-            font-weight: 300;
+            font-weight: 400;
             line-height: 1.75;
             color: var(--text-primary);
             display: flex;
@@ -295,13 +283,13 @@
 
         .result-heading-1 {
             font-size: 4.0cqw;
-            font-weight: 200;
+            font-weight: 500;
             color: var(--text-primary);
         }
 
         .result-heading-2 {
             font-size: 4.0cqw;
-            font-weight: 200;
+            font-weight: 500;
             color: var(--text-secondary);
         }
 
@@ -310,14 +298,14 @@
             padding-top: 1.4cqw;
             font-size: 1.4cqw;
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 400;
             line-height: 1.9;
             margin-bottom: 1.4cqw; /* 추가 마진 */
         }
 
         #copy-btn {
             font-size: 1.5cqw;
-            font-weight: 300;
+            font-weight: 500;
             color: var(--text-primary);
             display: inline-flex;
             align-items: center;
@@ -330,14 +318,14 @@
             font-size: 1.2cqw;
             color: var(--text-tertiary);
             margin-top: 0.7cqw;
-            font-weight: 300;
+            font-weight: 400;
             min-height: 1.2em;
         }
 
         #restart-btn-text {
             font-size: 1.2cqw;
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 500;
             margin-top: 4.2cqw;
             text-decoration: underline;
             padding-bottom: 1.4cqw;
@@ -384,15 +372,15 @@
                 <div class="corner-label label-bl">INDEX</div>
                 <div class="corner-label label-br">00 / 50</div>
 
-                <h1 class="intro-heading">Designer /<br>Balance Game</h1>
+                <h1 class="intro-heading">DESIGNER BALANCE GAME</h1>
                 <p class="intro-subtitle">나의 디자인 가치관과 우선순위를 발견하는 도구</p>
                 
                 <hr class="thin-rule" style="width: 10%; margin: 0 auto;">
 
-                <div class="intro-text-blocks">
-                    <div class="intro-block">두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.</div>
-                    <div class="intro-block selected">선택의 패턴이 나의 브랜드 철학과 디자인 성향을 드러냅니다.</div>
-                </div>
+                <p class="intro-desc">
+                    두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.<br>
+                    선택의 패턴이 나의 브랜드 철학과 디자인 성향을 드러냅니다.
+                </p>
 
                 <button id="start-btn">시작하기 →</button>
                 <p class="intro-caption">총 50문항 · 약 10분 소요</p>
