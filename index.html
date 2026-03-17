@@ -563,6 +563,15 @@
       { category: "브랜드 가치관", q: "Q50", a: "10년 후에도 내 이름으로 작업하고 싶다", b: "10년 후에는 더 큰 시스템 안에서 일하고 싶다" }
     ];
 
+    const categoryIcons = {
+      "시장 탐색": "🧭",
+      "문제 발견·정의": "🔍",
+      "아이디에이션": "✏️",
+      "조형·디자인": "📐",
+      "마케팅·브랜딩": "📢",
+      "브랜드 가치관": "💎"
+    };
+
     let currentQuestionIndex = 0;
     let answers = new Array(quizData.length).fill(null);
     let finalOutputText = "";
@@ -612,7 +621,7 @@
       }
 
       // Content
-      document.getElementById('q-cat-heading').textContent = data.category;
+      document.getElementById('q-cat-heading').textContent = `${categoryIcons[data.category]} ${data.category}`;
       document.getElementById('text-a').textContent = data.a;
       document.getElementById('text-b').textContent = data.b;
 
@@ -659,8 +668,9 @@
       quizData.forEach((data, index) => {
         if (data.category !== currentCat) {
           currentCat = data.category;
-          resultsText += `▶ ${currentCat}\n`;
-          plainTextOutput += `\n▶ ${currentCat}\n`;
+          const icon = categoryIcons[currentCat];
+          resultsText += `${icon} ${currentCat}\n`;
+          plainTextOutput += `\n${icon} ${currentCat}\n`;
         }
         const chosenText = (answers[index] === 'a') ? data.a : data.b;
         resultsText += `${data.q}. ${data.a} vs ${data.b}\n   → 선택: ${chosenText}\n\n`;
