@@ -262,31 +262,24 @@ html, body {
 
 .r-left {}
 
-/* 제목을 가로 한줄로 배치하기 위한 래퍼 */
-.rh-wrapper {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5vw;
-  margin-bottom: 2%; /* 기존의 margin-bottom 대체 */
-}
-
-/* 글자 크기 조정 */
 .rh {
-  font-size: 1.6vw; 
+  font-size: 2vw;
   font-weight: 200;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--tp);
   line-height: 1.2;
+  margin-bottom: 0.3vw;
 }
 
 .rh2 {
-  font-size: 1.6vw; 
+  font-size: 2vw;
   font-weight: 200;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ts);
   line-height: 1.2;
+  margin-bottom: 4%;
 }
 
 .rdb {
@@ -348,8 +341,7 @@ html, body {
 <body>
 
 <div class="stage">
-  <!-- image.jpeg가 아니라 image.jpg로 확장자 수정 방영 -->
-  <img class="bg-img" src="image.jpg" alt="">
+  <img class="bg-img" src="image.jpeg" alt="">
 
   <div class="screen-overlay">
 
@@ -397,10 +389,8 @@ html, body {
       <span class="cn tr">50 / 50</span>
       <div class="rl">
         <div class="r-left">
-          <div class="rh-wrapper">
-             <div class="rh">완료</div>
-             <div class="rh2">했어요</div>
-          </div>
+          <div class="rh">완료</div>
+          <div class="rh2">했어요</div>
           <div class="rdb">
             <p class="rd">아래 결과를 복사해서<br>Claude 또는 NotebookLM에<br>붙여넣으세요.<br><br>AI가 이 데이터를 바탕으로<br>퍼스널 브랜드를 분석해줍니다.</p>
           </div>
