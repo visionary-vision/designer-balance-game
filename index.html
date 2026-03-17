@@ -47,14 +47,16 @@
     /*
       모니터 화면 오버레이 위치.
       .scene 크기가 이미지 비율과 완전히 동일하므로, 퍼센트(%)값이 언제나 이미지 위 정확한 위치에 잠금됨.
-      (값을 조절해서 모니터 스크린에 딱 맞추세요)
+      비율을 스크린 비율인 2722x1690 으로 강제 고정!
     */
     .screen-overlay {
       position: absolute;
-      left: 17%;        /* 왼쪽 여백 */
-      top: 14%;         /* 위쪽 여백 */
-      width: 66%;       /* 화면 너비 */
-      height: 68%;      /* 화면 높이 */
+      left: 50%;
+      top: 48.6%;        /* 위아래 센터 미세 조정 */
+      transform: translate(-50%, -50%);
+      width: 70.885%;    /* 이미지 가로 기준 화면 비중 (약 70.8%) */
+      aspect-ratio: 2722 / 1690;
+      height: auto;
       overflow: hidden;
       border-radius: 6px; /* 맥 둥근 모서리 느낌 */
       z-index: 10;
@@ -187,13 +189,16 @@
       font-size: clamp(6px, 0.75vw, 10px);
       line-height: 1.9;
       white-space: pre-wrap;
-      max-height: 40%;
       overflow-y: auto;
       text-align: left;
       width: 80%;
       border-top: 0.5px solid #1a1a1a;
-      padding-top: 2%;
+      border-bottom: 0.5px solid #1a1a1a;
+      padding: 3% 0;
       margin-bottom: 3%;
+      /* 텍스트가 넘치면 스크롤이 생기도록 flex-box 할당 */
+      flex: 1;
+      min-height: 0;
     }
     .copy-btn {
       padding: 1.5% 6%;
@@ -205,11 +210,13 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       cursor: pointer;
+      flex-shrink: 0;
     }
     .copy-notice {
       font-size: clamp(6px, 0.7vw, 10px);
       color: #888;
       margin-top: 1%;
+      flex-shrink: 0;
     }
 
     /* 하단 바 */
@@ -310,9 +317,9 @@
           <span>Result</span>
           <span>Complete</span>
         </div>
-        <div class="content" style="gap:0;">
-          <div class="section-title" style="margin-bottom:2%;">Analysis<br>Complete.</div>
-          <p class="subtitle">아래 결과를 Claude 또는 NotebookLM에 붙여넣으세요.</p>
+        <div class="content" style="gap:0; justify-content: flex-start; padding-top: 8%;">
+          <div class="section-title" style="margin-bottom:2%; flex-shrink:0;">Analysis<br>Complete.</div>
+          <p class="subtitle" style="flex-shrink:0;">아래 결과를 Claude 또는 NotebookLM에 붙여넣으세요.</p>
           <div class="result-box" id="result-text"></div>
           <button class="copy-btn" onclick="copyResult()">Copy Result</button>
           <div class="copy-notice" id="copy-notice"></div>
