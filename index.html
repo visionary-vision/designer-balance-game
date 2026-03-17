@@ -1,71 +1,277 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>디자이너 밸런스게임</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg-color: #f4f3ef;
+  --text-color: #1a1a1a;
+  --border-color: #1a1a1a;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-#app { max-width: 640px; margin: 0 auto; padding: 2rem 1rem; font-family: var(--font-sans); }
-h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
-.subtitle { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 12px; }
-.desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 2rem; padding: 1rem; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
-.start-btn { display: block; width: 100%; padding: 14px; background: var(--color-text-primary); color: var(--color-background-primary); border: none; border-radius: var(--border-radius-md); font-size: 15px; cursor: pointer; margin-bottom: 10px; }
-.start-btn:hover { opacity: 0.85; }
-.start-info { text-align: center; font-size: 13px; color: var(--color-text-secondary); }
-.progress-wrap { height: 4px; background: var(--color-background-secondary); border-radius: 999px; margin-bottom: 1.5rem; overflow: hidden; }
-.progress-fill { height: 4px; background: var(--color-text-primary); border-radius: 999px; transition: width 0.25s ease; }
-.meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
-.cat-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
-.q-count { font-size: 12px; color: var(--color-text-secondary); }
-.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
-.choice-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1rem; font-size: 13px; color: var(--color-text-primary); cursor: pointer; line-height: 1.6; text-align: center; transition: all 0.15s; }
-.choice-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
-.choice-card.selected { border-color: var(--color-text-primary); border-width: 1.5px; background: var(--color-background-primary); font-weight: 500; }
-.vs-badge { display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--color-text-secondary); padding: 2px 8px; }
-.nav { display: flex; align-items: center; justify-content: space-between; }
-.back-btn { background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
-.back-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.skip-hint { font-size: 12px; color: var(--color-text-secondary); }
-.result-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
-.result-desc { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.25rem; line-height: 1.6; }
-.result-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; font-size: 12px; color: var(--color-text-primary); line-height: 1.9; white-space: pre-wrap; font-family: var(--font-mono); max-height: 400px; overflow-y: auto; margin-bottom: 1rem; }
-.copy-btn { width: 100%; padding: 13px; background: var(--color-text-primary); color: var(--color-background-primary); border: none; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; margin-bottom: 8px; }
-.copy-btn:hover { opacity: 0.85; }
-.restart-btn { width: 100%; padding: 10px; background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
-.copy-notice { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-top: 6px; }
-@media (max-width: 480px) {
-  .choices { grid-template-columns: 1fr; }
+
+body {
+  background-color: #e4e2db;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--text-color);
+}
+
+#app {
+  width: 100%;
+  max-width: 1024px;
+  height: 640px;
+  background-color: var(--bg-color);
+  border: 1px solid #d1cfc7;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.screen {
+  display: none;
+  height: 100%;
+  flex-direction: column;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 2px;
+  background-color: #d1cfc7;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--text-color);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.center-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.main-title {
+  font-size: 36px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+
+.main-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.desc-box {
+  margin-top: 40px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #4a4a4a;
+}
+
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: auto;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.2s;
+}
+
+.action-btn:hover {
+  opacity: 0.5;
+}
+
+.choices-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 50px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.choice-box {
+  flex: 1;
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  cursor: pointer;
+  position: relative;
+  text-align: left;
+  letter-spacing: -0.01em;
+  transition: opacity 0.2s;
+  color: var(--text-color);
+}
+
+.choice-box:hover {
+  opacity: 0.5;
+}
+
+.choice-box.selected {
+  font-weight: 500;
+}
+
+.choice-box.selected::before {
+  content: '■';
+  position: absolute;
+  left: -20px;
+  font-size: 9px;
+  top: 19px;
+}
+
+.result-box {
+  width: 100%;
+  max-width: 800px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  margin-top: 40px;
+  height: 350px;
+  text-align: left;
+  color: #333;
+}
+.result-box::-webkit-scrollbar {
+  width: 4px;
+}
+.result-box::-webkit-scrollbar-thumb {
+  background: #ccc;
+}
+
+@media (max-width: 768px) {
+  #app { height: 100vh; border: none; padding: 20px; box-shadow: none; border-radius: 0; }
+  .choices-container { flex-direction: column; gap: 30px; }
+  .choice-box { width: 100%; }
 }
 </style>
+</head>
+<body>
 
 <div id="app">
-  <div id="intro">
-    <h1>디자이너 밸런스게임</h1>
-    <p class="subtitle">나의 디자인 가치관과 우선순위를 발견하는 도구</p>
-    <div class="desc">두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.<br>선택의 패턴이 나의 브랜드 철학과 디자인 성향을 드러냅니다.<br>결과는 AI 퍼스널 브랜드 분석의 입력 데이터로 활용됩니다.</div>
-    <button class="start-btn" onclick="startQuiz()">시작하기</button>
-    <p class="start-info">총 50문항 · 약 10분 소요</p>
+  <!-- Intro Screen -->
+  <div id="intro" class="screen active">
+    <div class="top-bar">
+      <div>DESIGNER BALANCE GAME</div>
+      <div>INTRO / 00</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width: 0%;"></div></div>
+    
+    <div class="center-content">
+      <h1 class="main-title">디자이너 밸런스게임</h1>
+      <p class="main-subtitle">나의 디자인 가치관과 우선순위를 발견하는 도구</p>
+      <div class="desc-box">
+        두 가지 중 더 끌리는 것을 선택하세요. 정답은 없습니다.<br>
+        선택의 패턴이 나의 브랜드 철학과 디자인 성향을 드러냅니다.<br>
+        결과는 AI 퍼스널 브랜드 분석의 입력 데이터로 활용됩니다.<br><br>
+        총 50문항 · 약 10분 소요
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div>INDEX</div>
+      <button class="action-btn" onclick="startQuiz()">START <span style="font-size:8px;">▶</span></button>
+    </div>
   </div>
 
-  <div id="quiz" style="display:none">
-    <div class="progress-wrap"><div class="progress-fill" id="prog"></div></div>
-    <div class="meta">
-      <span class="cat-label" id="cat"></span>
-      <span class="q-count" id="qcount"></span>
+  <!-- Quiz Screen -->
+  <div id="quiz" class="screen">
+    <div class="top-bar">
+      <div>DESIGNER BALANCE GAME</div>
+      <div id="qcount">QUIZ / 01</div>
     </div>
-    <div class="choices">
-      <div class="choice-card" id="card-a" onclick="pick('A')"></div>
-      <div class="choice-card" id="card-b" onclick="pick('B')"></div>
+    <div class="progress-track"><div class="progress-fill" id="prog" style="width: 2%;"></div></div>
+    
+    <div class="center-content">
+      <h1 class="main-title" id="q-title" style="text-transform: uppercase;">SECTION 1: PERCEPTION</h1>
+      <p class="main-subtitle">Select the definition that most closely aligns with your view.</p>
+      
+      <div class="choices-container">
+        <div class="choice-box" id="card-a" onclick="pick('A')"></div>
+        <div class="choice-box" id="card-b" onclick="pick('B')"></div>
+      </div>
     </div>
-    <div class="nav">
-      <button class="back-btn" id="back-btn" onclick="goBack()" disabled>이전</button>
-      <span class="skip-hint">선택하면 자동으로 넘어갑니다</span>
+
+    <div class="bottom-bar">
+      <button class="action-btn" id="back-btn" style="visibility: hidden;" onclick="goBack()">PREV</button>
+      <div style="cursor: pointer;" onclick="restart()">EXIT</div>
     </div>
   </div>
 
-  <div id="result" style="display:none">
-    <p class="result-title">완료했어요</p>
-    <p class="result-desc">아래 결과를 복사해서 Claude 또는 NotebookLM에 붙여넣으세요.<br>AI가 이 데이터를 바탕으로 퍼스널 브랜드를 분석해줍니다.</p>
-    <div class="result-box" id="result-text"></div>
-    <button class="copy-btn" onclick="copyResult()">결과 복사하기</button>
-    <div class="copy-notice" id="copy-notice"></div>
-    <button class="restart-btn" onclick="restart()">다시 하기</button>
+  <!-- Result Screen -->
+  <div id="result" class="screen">
+    <div class="top-bar">
+      <div>DESIGNER BALANCE GAME</div>
+      <div>RESULT / 50</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width: 100%;"></div></div>
+    
+    <div class="center-content" style="align-items: flex-start;">
+      <h1 class="main-title" style="font-size: 24px; margin-top:20px;">분석을 위한 데이터</h1>
+      <p class="main-subtitle">아래 결과를 복사해서 AI에게 붙여넣으세요.</p>
+      <div class="result-box" id="result-text"></div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="action-btn" onclick="restart()">RESTART</button>
+      <div style="display:flex; gap:15px; align-items:center;">
+        <span id="copy-notice" style="font-size:10px; color:#666;"></span>
+        <button class="action-btn" onclick="copyResult()">COPY RESULT</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -127,27 +333,29 @@ let cur = 0;
 let answers = new Array(qs.length).fill(null);
 
 function startQuiz() {
-  document.getElementById('intro').style.display = 'none';
-  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('intro').classList.remove('active');
+  document.getElementById('quiz').classList.add('active');
   render();
 }
 
 function render() {
   const q = qs[cur];
-  document.getElementById('cat').textContent = q.cat;
-  document.getElementById('qcount').textContent = `${cur + 1} / ${qs.length}`;
+  
+  document.getElementById('q-title').textContent = "SECTION 0" + (Math.floor(cur/8)+1) + ": " + q.cat;
+  
+  document.getElementById('qcount').textContent = `QUIZ / ${String(cur + 1).padStart(2, '0')}`;
   document.getElementById('prog').style.width = Math.max(2, Math.round((cur + 1) / qs.length * 100)) + '%';
   document.getElementById('card-a').textContent = q.a;
   document.getElementById('card-b').textContent = q.b;
-  document.getElementById('card-a').className = 'choice-card' + (answers[cur] === 'A' ? ' selected' : '');
-  document.getElementById('card-b').className = 'choice-card' + (answers[cur] === 'B' ? ' selected' : '');
-  document.getElementById('back-btn').disabled = cur === 0;
+  document.getElementById('card-a').className = 'choice-box' + (answers[cur] === 'A' ? ' selected' : '');
+  document.getElementById('card-b').className = 'choice-box' + (answers[cur] === 'B' ? ' selected' : '');
+  document.getElementById('back-btn').style.visibility = cur === 0 ? 'hidden' : 'visible';
 }
 
 function pick(opt) {
   answers[cur] = opt;
-  document.getElementById('card-a').className = 'choice-card' + (opt === 'A' ? ' selected' : '');
-  document.getElementById('card-b').className = 'choice-card' + (opt === 'B' ? ' selected' : '');
+  document.getElementById('card-a').className = 'choice-box' + (opt === 'A' ? ' selected' : '');
+  document.getElementById('card-b').className = 'choice-box' + (opt === 'B' ? ' selected' : '');
   setTimeout(() => {
     if (cur < qs.length - 1) { cur++; render(); }
     else { showResult(); }
@@ -159,14 +367,14 @@ function goBack() {
 }
 
 function showResult() {
-  document.getElementById('quiz').style.display = 'none';
-  document.getElementById('result').style.display = 'block';
+  document.getElementById('quiz').classList.remove('active');
+  document.getElementById('result').classList.add('active');
   const lines = ['[디자이너 밸런스게임 문답 결과]\n'];
   let lastCat = '';
   qs.forEach((q, i) => {
     if (q.cat !== lastCat) { lines.push(`\n▶ ${q.cat}`); lastCat = q.cat; }
     const chosen = answers[i] === 'A' ? q.a : q.b;
-    lines.push(`Q${i + 1}. ${q.a} vs ${q.b}\n→ 선택: ${chosen}`);
+    lines.push(`Q${String(i + 1).padStart(2, '0')}. ${q.a} vs ${q.b}\n→ 선택: ${chosen}`);
   });
   lines.push('\n---\n이 결과를 Claude 또는 NotebookLM에 붙여넣어 분석을 진행하세요.');
   document.getElementById('result-text').textContent = lines.join('\n');
@@ -174,15 +382,18 @@ function showResult() {
 
 function copyResult() {
   navigator.clipboard.writeText(document.getElementById('result-text').textContent).then(() => {
-    document.getElementById('copy-notice').textContent = '복사됐어요. Claude 또는 NotebookLM에 붙여넣으세요.';
+    document.getElementById('copy-notice').textContent = 'COPIED!';
   });
 }
 
 function restart() {
   cur = 0;
   answers = new Array(qs.length).fill(null);
-  document.getElementById('result').style.display = 'none';
-  document.getElementById('intro').style.display = 'block';
+  document.getElementById('result').classList.remove('active');
+  document.getElementById('quiz').classList.remove('active');
+  document.getElementById('intro').classList.add('active');
   document.getElementById('copy-notice').textContent = '';
 }
 </script>
+</body>
+</html>
