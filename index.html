@@ -35,7 +35,7 @@
 
         /*
         이미지와 오버레이를 감싸는 래퍼 (화면을 꽉 채우면서 원본 비율 유지).
-        image.jpg 원본 해상도 (22016 x 12288)을 기준으로 비율 고정.
+        image.jpg 원본 해상도 (15000 x 8372)을 기준으로 비율 고정.
         */
         .scene {
             position: absolute;
@@ -43,9 +43,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 100vw;
-            height: calc(100vw * (12288 / 22016));
+            height: calc(100vw * (8372 / 15000));
             min-height: 100vh;
-            min-width: calc(100vh * (22016 / 12288));
+            min-width: calc(100vh * (15000 / 8372));
             overflow: hidden;
         }
 
